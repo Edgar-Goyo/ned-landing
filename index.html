@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Negocios Era Digital (NED): automatizaciones, chatbots inteligentes y consultoría tecnológica que liberan tu tiempo y escalan tu empresa en LATAM.">
+<title>NED — Negocios Era Digital | Automatización & IA para Empresas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════
+   NED — DESIGN TOKENS
+══════════════════════════════════════════════════ */
+:root {
+  --mag:        #C0447A;
+  --mag-light:  #E8789F;
+  --mag-dim:    rgba(192,68,122,.12);
+  --dark:       #111113;
+  --dark-card:  #1C1C1E;
+  --dark-mid:   #242426;
+  --border:     rgba(255,255,255,.07);
+  --text:       #F0EDE8;
+  --text-muted: #7A7A7C;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans:  'DM Sans', system-ui, sans-serif;
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  20px;
+  --radius-xl:  32px;
+  --trans:      .3s cubic-bezier(.16,1,.3,1);
+}
+
+/* ══ RESET ══ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--dark);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+}
+img, svg { display:block; max-width:100%; }
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select { font-family: inherit; }
+
+/* ══ CURSOR ══ */
+#cur  { position:fixed; width:10px; height:10px; background:var(--mag); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s; }
+#cur-ring { position:fixed; width:38px; height:38px; border:1.5px solid rgba(192,68,122,.6); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:transform .1s; }
+
+/* ══ SCROLL BAR ══ */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--dark); }
+::-webkit-scrollbar-thumb { background:var(--mag); border-radius:2px; }
+
+/* ══ UTILS ══ */
+.container { width:min(1200px,100%); margin-inline:auto; padding-inline:clamp(1.5rem,4vw,4rem); }
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+.tag {
+  display:inline-block; padding:.3rem .9rem;
+  background:var(--mag-dim); color:var(--mag-light);
+  font-size:.7rem; letter-spacing:.18em; text-transform:uppercase;
+  border-radius:100px; border:1px solid rgba(192,68,122,.25);
+  margin-bottom:1.2rem;
+}
+.section-title {
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,4.5vw,4rem);
+  font-weight:700; line-height:1.1;
+}
+.section-title em { font-style:italic; color:var(--mag-light); }
+.section-sub {
+  font-size:1rem; font-weight:300; color:var(--text-muted);
+  line-height:1.8; max-width:520px;
+}
+.btn-primary {
+  display:inline-flex; align-items:center; gap:.7rem;
+  padding:.9rem 2rem; background:var(--mag); color:#fff;
+  font-size:.85rem; font-weight:500; letter-spacing:.06em;
+  text-transform:uppercase; border-radius:100px; border:none;
+  cursor:pointer; transition:background var(--trans), transform .2s;
+  white-space:nowrap;
+}
+.btn-primary:hover { background:var(--mag-light); transform:scale(1.03); }
+.btn-primary svg { width:16px; height:16px; flex-shrink:0; }
+.btn-ghost {
+  display:inline-flex; align-items:center; gap:.7rem;
+  padding:.9rem 2rem; background:transparent; color:var(--text);
+  font-size:.85rem; font-weight:500; letter-spacing:.06em;
+  text-transform:uppercase; border-radius:100px;
+  border:1px solid rgba(255,255,255,.15); cursor:pointer;
+  transition:border-color var(--trans), background var(--trans);
+}
+.btn-ghost:hover { border-color:var(--mag); background:var(--mag-dim); }
+
+/* ══════════════════════════════════════════════════
+   1. NAVBAR
+══════════════════════════════════════════════════ */
+#navbar {
+  position:fixed; inset-block-start:0; inset-inline:0;
+  z-index:200;
+  padding:1.1rem 0;
+  transition:background .4s, padding .3s, box-shadow .4s;
+}
+#navbar.scrolled {
+  background:rgba(17,17,19,.88);
+  backdrop-filter:blur(18px);
+  box-shadow:0 1px 0 var(--border);
+  padding:.75rem 0;
+}
+.nav-inner {
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo {
+  display:flex; align-items:center; gap:.7rem;
+  font-family:var(--font-serif); font-size:1.5rem; font-weight:900;
+  letter-spacing:.08em; color:var(--text);
+}
+.nav-logo-dot {
+  width:8px; height:8px; border-radius:50%; background:var(--mag);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+.nav-links {
+  display:flex; align-items:center; gap:2.5rem; list-style:none;
+}
+.nav-links a {
+  font-size:.82rem; font-weight:400; letter-spacing:.1em;
+  text-transform:uppercase; color:rgba(240,237,232,.7);
+  transition:color var(--trans); padding:.2rem 0;
+  position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-2px; left:0; width:0; height:1px;
+  background:var(--mag); transition:width var(--trans);
+}
+.nav-links a:hover { color:var(--text); }
+.nav-links a:hover::after { width:100%; }
+
+.nav-cta { margin-left:1rem; }
+
+/* Hamburger */
+.nav-burger {
+  display:none; flex-direction:column; gap:5px;
+  width:28px; cursor:pointer; background:none; border:none;
+  padding:0;
+}
+.nav-burger span {
+  display:block; height:2px; background:var(--text);
+  border-radius:2px; transition:all .3s;
+}
+.nav-burger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity:0; }
+.nav-burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+/* Mobile nav drawer */
+#mobile-menu {
+  display:none; flex-direction:column; gap:1.5rem;
+  padding:2rem 0 1rem;
+}
+#mobile-menu a {
+  font-size:1.1rem; font-weight:400; letter-spacing:.08em;
+  text-transform:uppercase; color:rgba(240,237,232,.8);
+  padding:.4rem 0; border-bottom:1px solid var(--border);
+  transition:color var(--trans);
+}
+#mobile-menu a:hover { color:var(--mag-light); }
+#mobile-menu .btn-primary { width:fit-content; }
+
+/* ══════════════════════════════════════════════════
+   2. HERO
+══════════════════════════════════════════════════ */
+.hero {
+  position:relative; min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; text-align:center;
+}
+/* class específica para GSAP target */
+.hero-parallax {
+  position:absolute; inset:-20%;
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 35%, #3A0E22 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 15% 70%, #1E0D16 0%, transparent 50%),
+    var(--dark);
+  will-change:transform;
+}
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(192,68,122,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(192,68,122,.05) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse at center, black 30%, transparent 78%);
+  will-change:transform;
+}
+.hero-noise {
+  position:absolute; inset:0; opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.hero-content {
+  position:relative; z-index:2;
+  padding-top:5rem;
+  max-width:900px;
+  margin-inline:auto;
+  padding-inline:1.5rem;
+}
+.hero-eyebrow {
+  font-size:.72rem; letter-spacing:.32em; text-transform:uppercase;
+  color:var(--mag-light); margin-bottom:1.6rem; opacity:0;
+}
+.hero-title {
+  font-family:var(--font-serif);
+  font-size:clamp(3rem,9vw,8rem);
+  font-weight:900; line-height:.92;
+  letter-spacing:-.025em; overflow:hidden;
+  margin-bottom:1.8rem;
+}
+.hero-title .line { display:block; overflow:hidden; }
+.hero-title .line span { display:block; transform:translateY(110%); }
+.hero-title em { font-style:italic; color:var(--mag-light); }
+.hero-desc {
+  font-size:clamp(.95rem,1.5vw,1.15rem); font-weight:300;
+  color:var(--text-muted); line-height:1.75; max-width:560px;
+  margin-inline:auto; margin-bottom:2.8rem; opacity:0;
+}
+.hero-actions {
+  display:flex; align-items:center; justify-content:center;
+  gap:1rem; flex-wrap:wrap; opacity:0;
+}
+.hero-scroll {
+  position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:.5rem;
+  opacity:0; z-index:2;
+}
+.hero-scroll span { font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:var(--text-muted); }
+.scroll-line { width:1px; height:44px; background:linear-gradient(to bottom, var(--mag), transparent); animation:scrollPulse 2s ease-in-out infinite; }
+@keyframes scrollPulse { 0%,100%{opacity:.3;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.15)} }
+
+/* ══ TICKER / MARQUEE ══ */
+.ticker-wrap { overflow:hidden; padding:1.2rem 0; background:var(--mag); position:relative; }
+.ticker-track { display:flex; gap:2.5rem; white-space:nowrap; }
+.ticker-track span {
+  font-family:var(--font-serif); font-size:.9rem; font-weight:400;
+  letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.85); flex-shrink:0;
+}
+.ticker-dot { color:rgba(255,255,255,.35); font-size:1.2rem; line-height:1; }
+
+/* ══════════════════════════════════════════════════
+   3. SERVICIOS
+══════════════════════════════════════════════════ */
+.services-section {
+  padding:clamp(5rem,10vw,9rem) 0;
+  background:var(--dark);
+}
+.services-header {
+  display:grid; grid-template-columns:1fr 1fr;
+  align-items:end; gap:2rem; margin-bottom:4rem;
+}
+.services-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1.5px; overflow:hidden; border-radius:var(--radius-lg);
+}
+.svc-card {
+  position:relative; background:var(--dark-card);
+  padding:2.5rem; min-height:400px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  overflow:hidden; cursor:default;
+  transition:background var(--trans);
+}
+.svc-card:hover { background:#222224; }
+.svc-card-bg {
+  position:absolute; inset:0;
+  opacity:.5; transition:opacity var(--trans), transform .6s cubic-bezier(.16,1,.3,1);
+  will-change:transform;
+}
+.svc-card:hover .svc-card-bg { opacity:.7; transform:scale(1.05); }
+.svc-card-bg--1 { background:linear-gradient(170deg,#2C1020 0%,#111113 75%); }
+.svc-card-bg--2 { background:linear-gradient(170deg,#0E1A28 0%,#111113 75%); }
+.svc-card-bg--3 { background:linear-gradient(170deg,#1A1228 0%,#111113 75%); }
+
+.svc-icon {
+  position:absolute; top:2rem; left:2.5rem;
+  width:48px; height:48px; border-radius:var(--radius-md);
+  background:var(--mag-dim); border:1px solid rgba(192,68,122,.2);
+  display:flex; align-items:center; justify-content:center;
+}
+.svc-icon svg { width:22px; height:22px; stroke:var(--mag-light); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.svc-num {
+  font-size:.65rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--mag); margin-bottom:.7rem; position:relative; z-index:1;
+}
+.svc-name {
+  font-family:var(--font-serif); font-size:1.55rem; font-weight:700;
+  line-height:1.15; margin-bottom:1rem; position:relative; z-index:1;
+}
+.svc-desc {
+  font-size:.88rem; font-weight:300; color:var(--text-muted);
+  line-height:1.7; position:relative; z-index:1;
+}
+.svc-more {
+  display:flex; align-items:center; gap:.5rem; margin-top:1.5rem;
+  font-size:.78rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--mag); position:relative; z-index:1;
+  transition:gap var(--trans); width:fit-content;
+}
+.svc-more:hover { gap:.9rem; }
+.svc-more svg { width:14px; height:14px; }
+
+/* ══════════════════════════════════════════════════
+   4. STATS BAND
+══════════════════════════════════════════════════ */
+.stats-band {
+  padding:4rem 0; background:var(--dark-mid);
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; text-align:center; }
+.stat-item {}
+.stat-num {
+  font-family:var(--font-serif); font-size:clamp(2rem,4vw,3.5rem);
+  font-weight:900; color:var(--text); line-height:1;
+  margin-bottom:.4rem;
+}
+.stat-num span { color:var(--mag); }
+.stat-label { font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+
+/* ══════════════════════════════════════════════════
+   5. METODOLOGÍA
+══════════════════════════════════════════════════ */
+.metodo-section {
+  padding:clamp(5rem,10vw,9rem) 0;
+  background:var(--dark);
+}
+.metodo-header { text-align:center; margin-bottom:5rem; }
+.metodo-header .section-sub { margin-inline:auto; }
+
+.metodo-steps {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:2px; position:relative;
+}
+/* línea conectora */
+.metodo-steps::before {
+  content:''; position:absolute;
+  top:3.2rem; left:calc(16.6% + 1rem); right:calc(16.6% + 1rem);
+  height:1px; background:linear-gradient(90deg, var(--mag) 0%, rgba(192,68,122,.3) 50%, var(--mag) 100%);
+  z-index:0;
+}
+.step-card {
+  position:relative; z-index:1;
+  background:var(--dark-card); padding:2.5rem;
+  text-align:center; border-radius:var(--radius-md);
+  transition:transform var(--trans), background var(--trans);
+}
+.step-card:hover { background:#222224; transform:translateY(-6px); }
+.step-circle {
+  width:64px; height:64px; border-radius:50%;
+  background:var(--mag-dim); border:1px solid rgba(192,68,122,.3);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 1.6rem; position:relative;
+}
+.step-circle svg { width:26px; height:26px; stroke:var(--mag-light); fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.step-num {
+  position:absolute; top:-6px; right:-6px;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--mag); font-size:.65rem; font-weight:600;
+  display:flex; align-items:center; justify-content:center; color:#fff;
+}
+.step-verb {
+  font-family:var(--font-serif); font-size:1.7rem; font-weight:700;
+  margin-bottom:.8rem; line-height:1;
+}
+.step-verb em { font-style:italic; color:var(--mag-light); }
+.step-desc { font-size:.88rem; font-weight:300; color:var(--text-muted); line-height:1.7; }
+
+/* ══════════════════════════════════════════════════
+   6. PRUEBA SOCIAL / TESTIMONIO
+══════════════════════════════════════════════════ */
+.social-section {
+  padding:clamp(4rem,8vw,7rem) 0;
+  background:var(--dark-mid);
+}
+.social-inner {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:4rem; align-items:center;
+}
+.social-quote-wrap {}
+.quote-mark { font-family:var(--font-serif); font-size:6rem; line-height:.6; color:var(--mag); opacity:.4; margin-bottom:1rem; }
+.social-quote {
+  font-family:var(--font-serif); font-size:clamp(1.3rem,2.5vw,1.9rem);
+  font-weight:400; line-height:1.35; color:var(--text);
+  font-style:italic; margin-bottom:2rem;
+}
+.social-quote em { font-style:normal; color:var(--mag-light); }
+.social-author { display:flex; align-items:center; gap:1rem; }
+.social-avatar {
+  width:48px; height:48px; border-radius:50%;
+  background:var(--mag-dim); border:2px solid rgba(192,68,122,.3);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-serif); font-size:1rem; font-weight:700; color:var(--mag-light);
+}
+.social-author-info strong { font-size:.9rem; font-weight:500; display:block; }
+.social-author-info small { font-size:.78rem; color:var(--text-muted); }
+
+.social-brands {
+  display:flex; flex-direction:column; gap:1rem;
+}
+.brand-row {
+  display:flex; align-items:center; gap:1rem;
+  padding:1.2rem 1.5rem; background:var(--dark-card);
+  border-radius:var(--radius-md); border:1px solid var(--border);
+  transition:border-color var(--trans);
+}
+.brand-row:hover { border-color:rgba(192,68,122,.3); }
+.brand-icon {
+  width:40px; height:40px; border-radius:var(--radius-sm);
+  background:var(--mag-dim); display:flex; align-items:center;
+  justify-content:center; flex-shrink:0;
+}
+.brand-icon svg { width:18px; height:18px; stroke:var(--mag-light); fill:none; stroke-width:1.6; stroke-linecap:round; }
+.brand-info strong { font-size:.88rem; font-weight:500; display:block; }
+.brand-info small { font-size:.75rem; color:var(--text-muted); }
+.brand-tag {
+  margin-left:auto; padding:.25rem .7rem;
+  background:rgba(192,68,122,.12); color:var(--mag-light);
+  font-size:.65rem; letter-spacing:.1em; text-transform:uppercase;
+  border-radius:100px;
+}
+
+/* ══════════════════════════════════════════════════
+   7. CONTACTO
+══════════════════════════════════════════════════ */
+.contact-section {
+  padding:clamp(5rem,10vw,9rem) 0;
+  background:var(--dark); position:relative; overflow:hidden;
+}
+/* decoración radial */
+.contact-section::before {
+  content:''; position:absolute;
+  width:600px; height:600px; border-radius:50%;
+  background:radial-gradient(circle, rgba(192,68,122,.08) 0%, transparent 70%);
+  top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none;
+}
+.contact-inner {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:5rem; align-items:start; position:relative;
+}
+.contact-info {}
+.contact-info h2 { margin-bottom:1.2rem; }
+.contact-info .section-sub { margin-bottom:2rem; }
+.contact-detail {
+  display:flex; align-items:center; gap:.9rem;
+  padding:1rem 0; border-bottom:1px solid var(--border);
+  font-size:.9rem;
+}
+.contact-detail:last-of-type { border-bottom:none; }
+.contact-detail svg { width:18px; height:18px; stroke:var(--mag); fill:none; stroke-width:1.6; flex-shrink:0; }
+.contact-detail strong { color:var(--text-muted); font-weight:400; font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:.1rem; }
+
+/* FORM */
+.contact-form {
+  background:var(--dark-card); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:2.5rem;
+}
+.form-title {
+  font-family:var(--font-serif); font-size:1.4rem; font-weight:700;
+  margin-bottom:.5rem;
+}
+.form-sub { font-size:.85rem; color:var(--text-muted); margin-bottom:2rem; line-height:1.5; }
+.form-group { margin-bottom:1.2rem; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.form-group label {
+  display:block; font-size:.72rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--text-muted);
+  margin-bottom:.4rem;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width:100%; padding:.85rem 1.1rem;
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text);
+  font-size:.9rem; transition:border-color var(--trans), background var(--trans);
+  outline:none; resize:none;
+  -webkit-appearance:none; appearance:none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color:var(--mag); background:rgba(192,68,122,.04);
+}
+.form-group select option { background:var(--dark-card); }
+.form-group textarea { height:110px; }
+.form-check {
+  display:flex; align-items:flex-start; gap:.7rem;
+  font-size:.8rem; color:var(--text-muted); line-height:1.4;
+  margin-bottom:1.5rem;
+}
+.form-check input { width:16px; height:16px; flex-shrink:0; margin-top:.1rem; accent-color:var(--mag); }
+.form-submit { width:100%; padding:1.05rem; font-size:.88rem; justify-content:center; }
+
+/* Botón WhatsApp flotante */
+.whatsapp-btn {
+  position:fixed; bottom:2rem; right:2rem; z-index:500;
+  width:56px; height:56px; border-radius:50%;
+  background:#25D366; box-shadow:0 4px 20px rgba(37,211,102,.4);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .2s, box-shadow .2s;
+}
+.whatsapp-btn:hover { transform:scale(1.12); box-shadow:0 6px 28px rgba(37,211,102,.5); }
+.whatsapp-btn svg { width:28px; height:28px; fill:#fff; }
+
+/* ══════════════════════════════════════════════════
+   8. FOOTER
+══════════════════════════════════════════════════ */
+footer {
+  background:var(--dark-card); border-top:1px solid var(--border);
+  padding:3rem 0 2rem;
+}
+.footer-top {
+  display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr;
+  gap:3rem; padding-bottom:2.5rem;
+  border-bottom:1px solid var(--border); margin-bottom:2rem;
+}
+.footer-brand p { font-size:.85rem; color:var(--text-muted); line-height:1.7; margin-top:.8rem; max-width:260px; }
+.footer-col h4 {
+  font-size:.72rem; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--text-muted); margin-bottom:1.2rem;
+}
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:.65rem; }
+.footer-col ul a { font-size:.85rem; color:rgba(240,237,232,.55); transition:color var(--trans); }
+.footer-col ul a:hover { color:var(--mag-light); }
+.footer-bottom {
+  display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+}
+.footer-bottom small { font-size:.75rem; color:var(--text-muted); }
+.footer-socials { display:flex; gap:1rem; }
+.footer-socials a {
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+  transition:border-color var(--trans), background var(--trans);
+}
+.footer-socials a:hover { border-color:var(--mag); background:var(--mag-dim); }
+.footer-socials svg { width:14px; height:14px; stroke:var(--text-muted); fill:none; stroke-width:1.8; }
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media(max-width:900px) {
+  .nav-links, .nav-cta { display:none; }
+  .nav-burger { display:flex; }
+  #mobile-menu.open { display:flex; }
+  .services-grid { grid-template-columns:1fr; }
+  .services-header { grid-template-columns:1fr; }
+  .metodo-steps { grid-template-columns:1fr; }
+  .metodo-steps::before { display:none; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .social-inner { grid-template-columns:1fr; }
+  .contact-inner { grid-template-columns:1fr; gap:3rem; }
+  .footer-top { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:500px) {
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .form-row { grid-template-columns:1fr; }
+  .footer-top { grid-template-columns:1fr; }
+  .hero-actions { flex-direction:column; align-items:center; }
+}
+
+/* ══════════════════════════════════════════════════
+   SHOWCASE — ZIG-ZAG CASOS DE ÉXITO
+══════════════════════════════════════════════════ */
+.showcase-section {
+  padding: clamp(5rem,10vw,9rem) 0;
+  background: var(--dark);
+}
+.showcase-header {
+  text-align: center;
+  margin-bottom: clamp(3.5rem,6vw,5.5rem);
+}
+.showcase-header .section-sub { margin-inline: auto; margin-top: .8rem; }
+
+/* Fila ZigZag */
+.showcase-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(2.5rem,5vw,5rem);
+  margin-bottom: clamp(4rem,8vw,7rem);
+}
+.showcase-row:last-child { margin-bottom: 0; }
+/* Fila par → imagen a la izquierda */
+.showcase-row.reverse { flex-direction: row-reverse; }
+
+/* Columna de texto */
+.showcase-text {
+  flex: 1;
+  min-width: 0;
+}
+.showcase-case-num {
+  font-size: .68rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--mag);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+.showcase-case-num::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--mag);
+}
+.showcase-text h3 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem,3vw,2.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+}
+.showcase-text h3 em {
+  font-style: italic;
+  color: var(--mag-light);
+}
+.showcase-text p {
+  font-size: .95rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+.showcase-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.8rem;
+}
+.showcase-pill {
+  padding: .28rem .85rem;
+  background: var(--mag-dim);
+  border: 1px solid rgba(192,68,122,.2);
+  border-radius: 100px;
+  font-size: .7rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mag-light);
+}
+.showcase-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  font-size: .8rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mag);
+  transition: gap var(--trans), color var(--trans);
+}
+.showcase-link:hover { gap: .9rem; color: var(--mag-light); }
+.showcase-link svg { width: 14px; height: 14px; }
+
+/* Columna de imagen (mockup) */
+.showcase-visual {
+  flex: 1.1;
+  min-width: 0;
+}
+
+/* ── BROWSER MOCKUP ── */
+.browser-mockup {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #1E1E20;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.06) inset,
+    0 30px 80px rgba(0,0,0,.6),
+    0 0 0 1px rgba(255,255,255,.06);
+  transition: transform var(--trans), box-shadow var(--trans);
+  will-change: transform;
+}
+.browser-mockup:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.08) inset,
+    0 40px 100px rgba(192,68,122,.15),
+    0 0 0 1px rgba(192,68,122,.15);
+}
+
+/* Barra superior del navegador */
+.browser-bar {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  padding: .7rem 1.1rem;
+  background: #2A2A2C;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+}
+.browser-dots {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.browser-dots span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.browser-dots span:nth-child(1) { background: #FF5F57; }
+.browser-dots span:nth-child(2) { background: #FEBC2E; }
+.browser-dots span:nth-child(3) { background: #28C840; }
+.browser-url-bar {
+  flex: 1;
+  background: rgba(255,255,255,.06);
+  border-radius: 6px;
+  padding: .3rem .8rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.browser-url-bar svg {
+  width: 11px;
+  height: 11px;
+  stroke: var(--text-muted);
+  fill: none;
+  stroke-width: 1.5;
+  flex-shrink: 0;
+}
+.browser-url-text {
+  font-size: .72rem;
+  color: var(--text-muted);
+  letter-spacing: .02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.browser-screen {
+  overflow: hidden;
+  line-height: 0;
+  aspect-ratio: 16/10;
+  background: var(--dark-mid);
+  position: relative;
+}
+.browser-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform .6s cubic-bezier(.16,1,.3,1);
+}
+.browser-mockup:hover .browser-screen img {
+  transform: scale(1.03);
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .showcase-row,
+  .showcase-row.reverse {
+    flex-direction: column;
+  }
+  .showcase-visual { width: 100%; }
+  .showcase-text   { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- WhatsApp Flotante -->
+<a class="whatsapp-btn" href="https://wa.me/573001234567?text=Hola%2C%20me%20interesa%20automatizar%20mi%20negocio" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- ════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════ -->
+<header id="navbar" role="banner">
+  <div class="container">
+    <nav class="nav-inner" aria-label="Navegación principal">
+      <a href="#inicio" class="nav-logo" aria-label="NED - Negocios Era Digital">
+        <div class="nav-logo-dot" aria-hidden="true"></div>
+        NED
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#metodologia">Metodología</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+      <a href="#contacto" class="btn-primary nav-cta" aria-label="Solicitar diagnóstico gratuito">
+        Diagnóstico Gratis
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+      <button class="nav-burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <a href="#inicio">Inicio</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#metodologia">Metodología</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#contacto" class="btn-primary">Diagnóstico Gratis →</a>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<main>
+<section class="hero" id="inicio" aria-labelledby="hero-title">
+  <div class="hero-parallax" aria-hidden="true"></div>
+  <div class="hero-grid"    aria-hidden="true"></div>
+  <div class="hero-noise"   aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Automatización · Inteligencia Artificial · Crecimiento</p>
+    <h1 class="hero-title" id="hero-title">
+      <span class="line"><span>Tu empresa en</span></span>
+      <span class="line"><span>la <em>Era Digital</em></span></span>
+      <span class="line"><span>empieza hoy</span></span>
+    </h1>
+    <p class="hero-desc">
+      En NED transformamos procesos manuales en flujos inteligentes. Automatización, chatbots con IA y consultoría tecnológica que ahorran hasta <strong style="color:var(--mag-light)">70% del tiempo operativo</strong> de tu equipo.
+    </p>
+    <div class="hero-actions">
+      <a href="#contacto" class="btn-primary">
+        Automatiza tu negocio
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+      <a href="#servicios" class="btn-ghost">Ver servicios</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track" id="ticker">
+    <span>Automatización</span><span class="ticker-dot">·</span>
+    <span>Chatbots IA</span><span class="ticker-dot">·</span>
+    <span>Consultoría Tech</span><span class="ticker-dot">·</span>
+    <span>Make / n8n</span><span class="ticker-dot">·</span>
+    <span>GPT Enterprise</span><span class="ticker-dot">·</span>
+    <span>CRM Inteligente</span><span class="ticker-dot">·</span>
+    <span>Flujos No-Code</span><span class="ticker-dot">·</span>
+    <span>APIs & Webhooks</span><span class="ticker-dot">·</span>
+    <span>Automatización</span><span class="ticker-dot">·</span>
+    <span>Chatbots IA</span><span class="ticker-dot">·</span>
+    <span>Consultoría Tech</span><span class="ticker-dot">·</span>
+    <span>Make / n8n</span><span class="ticker-dot">·</span>
+    <span>GPT Enterprise</span><span class="ticker-dot">·</span>
+    <span>CRM Inteligente</span><span class="ticker-dot">·</span>
+    <span>Flujos No-Code</span><span class="ticker-dot">·</span>
+    <span>APIs & Webhooks</span><span class="ticker-dot">·</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SHOWCASE — CASOS DE ÉXITO
+════════════════════════════════════════ -->
+<section class="showcase-section" id="servicios" aria-labelledby="showcase-title">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="showcase-header">
+      <span class="tag">Portafolio Real</span>
+      <h2 class="section-title" id="showcase-title">Soluciones que ya están<br><em>transformando</em> empresas</h2>
+      <p class="section-sub">
+        Tres casos reales donde convertimos procesos manuales, caóticos o inexistentes en plataformas digitales de alto impacto.
+      </p>
+    </div>
+
+    <!-- ── CASO 1: Texto izq | Imagen der ── -->
+    <article class="showcase-row" id="caso-1">
+
+      <div class="showcase-text">
+        <p class="showcase-case-num">Caso 01</p>
+        <h3>Automatización <em>Regulatoria</em><br>y Ambiental</h3>
+        <p>
+          Diseñamos un software analítico a medida para la gestión integral de normativas PMA y PSM.
+          La plataforma centraliza guías de aplicabilidad, cruza automáticamente variables normativas
+          complejas y genera reportes de cumplimiento con un solo clic — reduciendo en un <strong style="color:var(--mag-light)">65% el tiempo</strong>
+          dedicado a revisiones manuales de requerimientos ambientales.
+        </p>
+        <div class="showcase-pills">
+          <span class="showcase-pill">Normativa PMA/PSM</span>
+          <span class="showcase-pill">Motor de reglas</span>
+          <span class="showcase-pill">Reportes automáticos</span>
+          <span class="showcase-pill">Auditoría digital</span>
+        </div>
+        <a href="#contacto" class="showcase-link" aria-label="Solicitar solución similar">
+          Quiero algo similar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <div class="showcase-visual">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-url-bar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="browser-url-text">app.ned.co/guia-aplicabilidad-pma</span>
+            </div>
+          </div>
+          <div class="browser-screen">
+            <<img src="captures/Guia_de_Aplicabilidad_PMA-PSM.png" alt="Plataforma Guía de Aplicabilidad PMA-PSM — Automatización Regulatoria y Ambiental" loading="lazy">
+            
+            
+          </div>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ── CASO 2: Imagen izq | Texto der (reverse) ── -->
+    <article class="showcase-row reverse" id="caso-2">
+
+      <div class="showcase-text">
+        <p class="showcase-case-num">Caso 02</p>
+        <h3>Logística <em>Inteligente</em><br>y Gestión de Riesgos</h3>
+        <p>
+          Implementamos un sistema de inteligencia operacional para el monitoreo en tiempo real de orden
+          público y transitabilidad vial. La plataforma Risk-Intel integra fuentes de datos heterogéneas,
+          aplica algoritmos de clasificación de riesgo y emite alertas automáticas, permitiendo a los
+          equipos de logística tomar <strong style="color:var(--mag-light)">decisiones en segundos</strong> ante incidentes en ruta.
+        </p>
+        <div class="showcase-pills">
+          <span class="showcase-pill">Tiempo real</span>
+          <span class="showcase-pill">Alertas automáticas</span>
+          <span class="showcase-pill">Análisis de riesgo</span>
+          <span class="showcase-pill">Integración de datos</span>
+        </div>
+        <a href="#contacto" class="showcase-link" aria-label="Solicitar solución similar">
+          Quiero algo similar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <div class="showcase-visual">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-url-bar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="browser-url-text">app.ned.co/risk-intel/dashboard</span>
+            </div>
+          </div>
+          <div class="browser-screen">
+            <<img src="captures/Risk-Intel.png" alt="Plataforma Risk-Intel — Logística Inteligente y Gestión de Riesgos" loading="lazy">
+            
+          </div>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ── CASO 3: Texto izq | Imagen der ── -->
+    <article class="showcase-row" id="caso-3">
+
+      <div class="showcase-text">
+        <p class="showcase-case-num">Caso 03</p>
+        <h3>Monitoreo y Seguimiento<br><em>Satelital</em> en Campo</h3>
+        <p>
+          Desarrollamos una aplicación de trazabilidad geográfica para el control preciso de flotas,
+          maquinaria y personal en terreno. Field Tracker combina telemetría GPS, geofencing configurable
+          y reportes de actividad, entregando a los coordinadores una <strong style="color:var(--mag-light)">visibilidad total del campo</strong>
+          desde cualquier dispositivo, en tiempo real.
+        </p>
+        <div class="showcase-pills">
+          <span class="showcase-pill">GPS / Telemetría</span>
+          <span class="showcase-pill">Geofencing</span>
+          <span class="showcase-pill">Control de flotas</span>
+          <span class="showcase-pill">Responsive</span>
+        </div>
+        <a href="#contacto" class="showcase-link" aria-label="Solicitar solución similar">
+          Quiero algo similar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <div class="showcase-visual">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-url-bar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="browser-url-text">app.ned.co/field-tracker/map</span>
+            </div>
+          </div>
+          <div class="browser-screen">
+            <<img src="captures/FieldTracker.png" alt="Field Tracker — Monitoreo y Seguimiento Satelital en Campo" loading="lazy">
+            >
+          </div>
+        </div>
+      </div>
+
+    </article>
+
+  </div>
+</section>
+
+
+<!-- STATS -->
+<div class="stats-band" aria-label="Estadísticas NED">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num" data-target="70">0<span>%</span></div>
+        <div class="stat-label">Reducción de tiempo operativo</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-target="120">0<span>+</span></div>
+        <div class="stat-label">Empresas automatizadas</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-target="98">0<span>%</span></div>
+        <div class="stat-label">Tasa de satisfacción</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-target="8">0<span>+</span></div>
+        <div class="stat-label">Años en LATAM</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     METODOLOGÍA
+════════════════════════════════════════ -->
+<section class="metodo-section" id="metodologia" aria-labelledby="metodo-title">
+  <div class="container">
+    <div class="metodo-header">
+      <span class="tag">Cómo trabajamos</span>
+      <h2 class="section-title" id="metodo-title">Un proceso <em>probado</em>,<br>resultados predecibles</h2>
+      <p class="section-sub" style="margin-top:1rem">
+        Nuestro método de tres fases garantiza implementaciones rápidas con un riesgo mínimo y ROI medible desde la primera semana.
+      </p>
+    </div>
+
+    <div class="metodo-steps">
+      <!-- Paso 1 -->
+      <article class="step-card" id="step-1">
+        <div class="step-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+          <span class="step-num">1</span>
+        </div>
+        <h3 class="step-verb"><em>Analizamos</em></h3>
+        <p class="step-desc">
+          Diagnóstico profundo de tus procesos actuales, identificación de fricciones y oportunidades de automatización con máximo impacto y mínima inversión.
+        </p>
+      </article>
+
+      <!-- Paso 2 -->
+      <article class="step-card" id="step-2">
+        <div class="step-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span class="step-num">2</span>
+        </div>
+        <h3 class="step-verb"><em>Desarrollamos</em></h3>
+        <p class="step-desc">
+          Construimos e integramos la solución en sprints ágiles de 2 semanas, con validaciones constantes y ajustes en tiempo real según tus necesidades.
+        </p>
+      </article>
+
+      <!-- Paso 3 -->
+      <article class="step-card" id="step-3">
+        <div class="step-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span class="step-num">3</span>
+        </div>
+        <h3 class="step-verb"><em>Optimizamos</em></h3>
+        <p class="step-desc">
+          Post-lanzamiento monitoreamos KPIs, entrenamos a tu equipo y seguimos iterando para que la solución mejore continuamente y escale con tu empresa.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="social-section" aria-labelledby="social-title">
+  <div class="container">
+    <div class="social-inner">
+      <div class="social-quote-wrap">
+        <div class="quote-mark" aria-hidden="true">"</div>
+        <blockquote class="social-quote" id="social-title">
+          NED nos ayudó a <em>reducir 6 horas diarias</em> de trabajo manual en facturación. El chatbot atiende el 80% de las consultas sin que toquemos nada.
+        </blockquote>
+        <div class="social-author">
+          <div class="social-avatar" aria-hidden="true">CR</div>
+          <div class="social-author-info">
+            <strong>Carlos Rondón</strong>
+            <small>CEO · DistribuidoraSur · Bogotá, Colombia</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="social-brands" aria-label="Casos de éxito">
+        <div class="brand-row">
+          <div class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="brand-info">
+            <strong>E-commerce automatizado</strong>
+            <small>Pedidos, inventario y despacho en piloto automático</small>
+          </div>
+          <span class="brand-tag">Retail</span>
+        </div>
+        <div class="brand-row">
+          <div class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="brand-info">
+            <strong>Atención al cliente 24/7</strong>
+            <small>Chatbot GPT integrado con CRM y WhatsApp</small>
+          </div>
+          <span class="brand-tag">SaaS</span>
+        </div>
+        <div class="brand-row">
+          <div class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="brand-info">
+            <strong>Reportes y BI automáticos</strong>
+            <small>Dashboards en tiempo real sin intervención humana</small>
+          </div>
+          <span class="brand-tag">Fintech</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     CONTACTO
+════════════════════════════════════════ -->
+<section class="contact-section" id="contacto" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="contact-inner">
+      <!-- Info -->
+      <div class="contact-info">
+        <span class="tag">Hablemos</span>
+        <h2 class="section-title" id="contact-title">Tu diagnóstico<br><em>gratuito</em> te espera</h2>
+        <p class="section-sub" style="margin-top:1rem;margin-bottom:2rem">
+          En 30 minutos identificamos qué procesos de tu empresa pueden automatizarse hoy y te damos un plan de acción concreto, sin costo ni compromiso.
+        </p>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.6 19.79 19.79 0 0 1 1.61 3 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div>
+            <strong>WhatsApp / Teléfono</strong>
+            +57 300 123 4567
+          </div>
+        </div>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <div>
+            <strong>Email</strong>
+            hola@negocioseradigital.com
+          </div>
+        </div>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div>
+            <strong>Ubicación</strong>
+            Bogotá, Colombia · Remoto LATAM
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="contact-form" role="region" aria-label="Formulario de contacto">
+        <h3 class="form-title">Solicitar diagnóstico</h3>
+        <p class="form-sub">Respuesta en menos de 2 horas hábiles</p>
+        <form id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-name">Nombre *</label>
+              <input type="text" id="f-name" name="nombre" placeholder="Tu nombre" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label for="f-company">Empresa *</label>
+              <input type="text" id="f-company" name="empresa" placeholder="Nombre de tu empresa" required autocomplete="organization">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="f-email">Email *</label>
+            <input type="email" id="f-email" name="email" placeholder="tu@empresa.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="f-phone">WhatsApp / Teléfono</label>
+            <input type="tel" id="f-phone" name="telefono" placeholder="+57 300 000 0000" autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label for="f-service">¿Qué necesitas? *</label>
+            <select id="f-service" name="servicio" required>
+              <option value="" disabled selected>Selecciona un servicio</option>
+              <option value="automatizacion">Automatización de Procesos</option>
+              <option value="chatbot">Chatbot Inteligente con IA</option>
+              <option value="consultoria">Consultoría Tecnológica</option>
+              <option value="todo">Todo lo anterior / No sé por dónde empezar</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-msg">Cuéntanos tu reto</label>
+            <textarea id="f-msg" name="mensaje" placeholder="¿Qué proceso quieres automatizar? ¿Cuál es tu mayor dolor operativo hoy?"></textarea>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" id="f-terms" name="terminos" required>
+            <label for="f-terms">Acepto que NED me contacte con información sobre sus servicios. Sin spam, promesa.</label>
+          </div>
+          <button type="submit" class="btn-primary form-submit">
+            Quiero mi diagnóstico gratuito
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#inicio" class="nav-logo" style="font-size:1.4rem">
+          <div class="nav-logo-dot"></div>NED
+        </a>
+        <p>Automatizamos procesos y potenciamos empresas en LATAM con inteligencia artificial y desarrollo a medida.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Servicios</h4>
+        <ul>
+          <li><a href="#servicios">Automatización</a></li>
+          <li><a href="#servicios">Chatbots IA</a></li>
+          <li><a href="#servicios">Consultoría Tech</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#metodologia">Metodología</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+          <li><a href="#contacto">Diagnóstico gratis</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Términos de uso</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <small>© 2026 Negocios Era Digital — Todos los derechos reservados.</small>
+      <div class="footer-socials" aria-label="Redes sociales">
+        <a href="#" aria-label="LinkedIn NED">
+          <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram NED">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" aria-label="WhatsApp NED">
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════════
+     GSAP + ScrollTrigger
+════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+'use strict';
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── CURSOR ── */
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function animC(){
+  requestAnimationFrame(animC);
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>gsap.to(ring,{scale:1.8,opacity:.4,duration:.3}));
+  el.addEventListener('mouseleave',()=>gsap.to(ring,{scale:1,opacity:1,duration:.3}));
+});
+
+/* ── NAVBAR SCROLL ── */
+const navbar=document.getElementById('navbar');
+ScrollTrigger.create({
+  start:'top -60',
+  onUpdate:self=>navbar.classList.toggle('scrolled',self.progress>0)
+});
+
+/* ── MOBILE MENU ── */
+const burger=document.getElementById('burger');
+const mobileMenu=document.getElementById('mobile-menu');
+burger.addEventListener('click',()=>{
+  burger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  burger.setAttribute('aria-expanded', mobileMenu.classList.contains('open'));
+});
+mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  burger.classList.remove('open'); mobileMenu.classList.remove('open');
+  burger.setAttribute('aria-expanded','false');
+}));
+
+/* ── TICKER MARQUEE ── */
+(function(){
+  const track=document.getElementById('ticker');
+  const clone=track.cloneNode(true);
+  track.parentElement.appendChild(clone);
+  let x=0; const speed=.55; const tw=track.scrollWidth;
+  (function move(){
+    requestAnimationFrame(move); x-=speed;
+    if(x<=-tw) x=0;
+    track.style.transform=`translateX(${x}px)`;
+    clone.style.transform=`translateX(${x+tw}px)`;
+  })();
+})();
+
+/* ── HERO ENTRANCE ── */
+const tl=gsap.timeline({delay:.15});
+tl.to('.hero-eyebrow',{opacity:1,y:0,duration:.8,ease:'power3.out'})
+  .to('.hero-title .line span',{y:0,duration:1.05,stagger:.14,ease:'power4.out'},'-=.4')
+  .to('.hero-desc',{opacity:1,y:0,duration:.8,ease:'power3.out'},'-=.5')
+  .to('.hero-actions',{opacity:1,y:0,duration:.7,ease:'power3.out'},'-=.45')
+  .to('.hero-scroll',{opacity:1,duration:.6,ease:'power2.out'},'-=.2');
+
+/* ── HERO PARALLAX / ZOOM — gsap.fromTo() ── */
+gsap.fromTo('.hero-parallax',
+  {scale:1},
+  {scale:1.25, ease:'none',
+   scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}}
+);
+gsap.fromTo('.hero-grid',
+  {scale:1},
+  {scale:1.12, ease:'none',
+   scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}}
+);
+gsap.to('.hero-content',{
+  y:'22%', opacity:0, ease:'none',
+  scrollTrigger:{trigger:'.hero',start:'top top',end:'70% top',scrub:1}
+});
+
+/* ── SERVICIOS ── */
+gsap.from('.services-header',{y:60,opacity:0,duration:1,ease:'power3.out',
+  scrollTrigger:{trigger:'.services-section',start:'top 72%'}});
+document.querySelectorAll('.svc-card').forEach((c,i)=>{
+  gsap.from(c,{y:80,opacity:0,duration:1,ease:'power3.out',delay:i*.12,
+    scrollTrigger:{trigger:'.services-grid',start:'top 78%'}});
+  gsap.fromTo(c,{scale:.93},{scale:1,ease:'none',
+    scrollTrigger:{trigger:c,start:'top 85%',end:'top 35%',scrub:1.2}});
+  /* zoom bg */
+  gsap.fromTo(c.querySelector('.svc-card-bg'),{scale:1},{scale:1.18,ease:'none',
+    scrollTrigger:{trigger:c,start:'top bottom',end:'bottom top',scrub:1}});
+});
+
+/* ── STATS COUNTER ── */
+document.querySelectorAll('.stat-num[data-target]').forEach(el=>{
+  const target=+el.dataset.target;
+  const suffix=el.querySelector('span')?.textContent||'';
+  const obj={val:0};
+  gsap.to(obj,{val:target,duration:2,ease:'power2.out',
+    onUpdate:()=>{el.innerHTML=Math.round(obj.val)+'<span>'+suffix+'</span>';},
+    scrollTrigger:{trigger:el,start:'top 82%',once:true}});
+});
+
+/* ── METODOLOGÍA ── */
+gsap.from('.metodo-header',{y:50,opacity:0,duration:1,ease:'power3.out',
+  scrollTrigger:{trigger:'.metodo-section',start:'top 72%'}});
+document.querySelectorAll('.step-card').forEach((c,i)=>{
+  gsap.from(c,{y:60,opacity:0,duration:.9,ease:'power3.out',delay:i*.15,
+    scrollTrigger:{trigger:'.metodo-steps',start:'top 78%'}});
+  gsap.fromTo(c,{scale:.93},{scale:1,ease:'none',
+    scrollTrigger:{trigger:c,start:'top 88%',end:'top 45%',scrub:1}});
+});
+
+/* ── SOCIAL PROOF ── */
+gsap.from('.social-quote-wrap',{x:-60,opacity:0,duration:1.1,ease:'power3.out',
+  scrollTrigger:{trigger:'.social-section',start:'top 72%'}});
+gsap.from('.social-brands',{x:60,opacity:0,duration:1.1,ease:'power3.out',
+  scrollTrigger:{trigger:'.social-section',start:'top 72%'}});
+document.querySelectorAll('.brand-row').forEach((r,i)=>{
+  gsap.from(r,{y:30,opacity:0,duration:.7,ease:'power3.out',delay:i*.1,
+    scrollTrigger:{trigger:'.social-brands',start:'top 80%'}});
+});
+
+/* ── CONTACTO ── */
+gsap.from('.contact-info',{x:-50,opacity:0,duration:1,ease:'power3.out',
+  scrollTrigger:{trigger:'.contact-section',start:'top 72%'}});
+gsap.from('.contact-form',{x:50,opacity:0,duration:1,ease:'power3.out',
+  scrollTrigger:{trigger:'.contact-section',start:'top 72%'}});
+
+/* ── FORM SUBMIT (simulado) ── */
+document.getElementById('contactForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const btn=this.querySelector('.form-submit');
+  btn.textContent='✓ Mensaje enviado — Te contactamos pronto';
+  btn.style.background='#2C7A4B';
+  btn.disabled=true;
+});
+
+
+/* ── SHOWCASE ZIG-ZAG ── */
+document.querySelectorAll('.showcase-row').forEach((row, i) => {
+  const isReverse = row.classList.contains('reverse');
+  const txt = row.querySelector('.showcase-text');
+  const vis = row.querySelector('.showcase-visual');
+
+  /* Texto: entra desde el lado donde está */
+  gsap.from(txt, {
+    x: isReverse ? 60 : -60,
+    opacity: 0,
+    duration: 1.05,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: row, start: 'top 75%' }
+  });
+
+  /* Mockup: entra desde el lado contrario */
+  gsap.from(vis, {
+    x: isReverse ? -60 : 60,
+    opacity: 0,
+    duration: 1.05,
+    ease: 'power3.out',
+    delay: 0.15,
+    scrollTrigger: { trigger: row, start: 'top 75%' }
+  });
+
+  /* Parallax / zoom en la imagen del mockup */
+  const img = vis.querySelector('.browser-screen img');
+  if (img) {
+    gsap.fromTo(img,
+      { scale: 1 },
+      {
+        scale: 1.08,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: vis,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
+        }
+      }
+    );
+  }
+
+  /* Scale suave del mockup al entrar */
+  gsap.fromTo(vis.querySelector('.browser-mockup'),
+    { scale: 0.93 },
+    {
+      scale: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: vis,
+        start: 'top 88%',
+        end: 'top 40%',
+        scrub: 1
+      }
+    }
+  );
+});
+
+/* ── PROGRESS BAR ── */
+const bar=document.createElement('div');
+bar.style.cssText='position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#C0447A,#E8789F);z-index:99999;pointer-events:none;transition:width .1s linear;';
+document.body.appendChild(bar);
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
+  bar.style.width=Math.min(pct,100)+'%';
+});
+
+/* ── REFRESH ── */
+window.addEventListener('load',()=>ScrollTrigger.refresh());
+setTimeout(()=>ScrollTrigger.refresh(),800);
+
+})();
+</script>
+</body>
+</html>

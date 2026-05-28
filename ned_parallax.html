@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NED — Diseño & Innovación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --magenta: #C0447A;
+    --magenta-light: #E8789F;
+    --magenta-pale: #F2D0DF;
+    --dark: #1A1A1B;
+    --dark-mid: #2C2C2E;
+    --gray: #4A4A4C;
+    --gray-light: #8A8A8C;
+    --off-white: #F5F2EE;
+    --cream: #FAF8F5;
+  }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--off-white);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--magenta);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width .2s, height .2s, opacity .2s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 38px; height: 38px;
+    border: 1.5px solid var(--magenta);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width .3s, height .3s, border-color .3s;
+    opacity: .6;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem 4rem;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: .12em;
+    color: var(--off-white);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--off-white);
+    text-decoration: none;
+    font-size: .82rem;
+    font-weight: 400;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    opacity: .8;
+    transition: opacity .2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--dark);
+  }
+  .hero-bg {
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(ellipse at 60% 40%, #3D1A2A 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 70%, #1A0E15 0%, transparent 50%),
+                var(--dark);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(192,68,122,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,68,122,.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-size: .75rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 900;
+    line-height: .92;
+    letter-spacing: -.02em;
+    overflow: hidden;
+  }
+  .hero-title .line { display: block; overflow: hidden; }
+  .hero-title .line span { display: block; transform: translateY(110%); }
+  .hero-title em {
+    font-style: italic;
+    color: var(--magenta-light);
+  }
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--gray-light);
+    letter-spacing: .04em;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .6rem;
+    opacity: 0;
+  }
+  .hero-scroll span {
+    font-size: .65rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--gray-light);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--magenta), transparent);
+    animation: scrollPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: .3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* SECTIONS GENERAL */
+  section { position: relative; }
+
+  /* MARQUEE */
+  .marquee-section {
+    overflow: hidden;
+    padding: 1.5rem 0;
+    background: var(--magenta);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    white-space: nowrap;
+  }
+  .marquee-track span {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.85);
+    flex-shrink: 0;
+  }
+  .marquee-dot {
+    color: rgba(255,255,255,.4);
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  /* ABOUT / EXPAND SECTION */
+  .about-section {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 4rem;
+    gap: 5rem;
+    background: var(--dark);
+  }
+  .about-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+  }
+  .about-text h2 em { font-style: italic; color: var(--magenta-light); }
+  .about-text p {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--gray-light);
+    line-height: 1.8;
+    max-width: 440px;
+  }
+  .about-text p + p { margin-top: 1.2rem; }
+  .about-visual {
+    position: relative;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .about-img-wrap {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .about-img-wrap img {
+    width: 100%;
+    height: 115%;
+    object-fit: cover;
+    object-position: center;
+    transform: translateY(-7%);
+    display: block;
+  }
+  .about-counter {
+    position: absolute;
+    bottom: -1.5rem;
+    right: -1.5rem;
+    width: 120px;
+    height: 120px;
+    background: var(--magenta);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .about-counter strong {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .about-counter small {
+    font-size: .6rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    opacity: .8;
+  }
+
+  /* SERVICES */
+  .services-section {
+    padding: 10rem 4rem;
+    background: var(--dark-mid);
+    overflow: hidden;
+  }
+  .services-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 5rem;
+  }
+  .services-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: .95;
+  }
+  .services-header h2 em { font-style: italic; color: var(--magenta-light); }
+  .services-header p {
+    max-width: 300px;
+    font-weight: 300;
+    color: var(--gray-light);
+    font-size: .95rem;
+    line-height: 1.7;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .service-card {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    background: var(--dark);
+  }
+  .service-card-img {
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    transform: translateY(-10%);
+    filter: grayscale(30%) brightness(.55);
+    transition: filter .5s;
+    display: block;
+  }
+  .service-card:hover .service-card-img {
+    filter: grayscale(0%) brightness(.7);
+  }
+  .service-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(26,26,27,.95) 0%, transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem;
+  }
+  .service-num {
+    font-size: .7rem;
+    letter-spacing: .25em;
+    color: var(--magenta);
+    margin-bottom: .6rem;
+    text-transform: uppercase;
+  }
+  .service-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: .8rem;
+    line-height: 1.1;
+  }
+  .service-desc {
+    font-size: .85rem;
+    font-weight: 300;
+    color: var(--gray-light);
+    line-height: 1.6;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s;
+  }
+  .service-card:hover .service-desc { max-height: 80px; }
+
+  /* PARALLAX GALLERY */
+  .gallery-section {
+    padding: 10rem 4rem;
+    background: var(--dark);
+    overflow: hidden;
+  }
+  .gallery-label {
+    font-size: .75rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 4rem;
+    text-align: center;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1.3fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .gallery-item {
+    overflow: hidden;
+    border-radius: 3px;
+    position: relative;
+  }
+  .gallery-item:nth-child(2) { margin-top: 6rem; }
+  .gallery-item:nth-child(4) { margin-top: -5rem; }
+  .gallery-item:nth-child(6) { margin-top: 4rem; }
+  .gallery-img-inner {
+    width: 100%;
+    height: 120%;
+    transform: translateY(-8%);
+    overflow: hidden;
+  }
+  .gallery-img-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .6s;
+  }
+  .gallery-item:hover .gallery-img-inner img { transform: scale(1.04); }
+  .gallery-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 1.4rem 1.2rem .9rem;
+    background: linear-gradient(to top, rgba(26,26,27,.9) 0%, transparent 100%);
+    font-size: .78rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+    transform: translateY(100%);
+    transition: transform .35s;
+  }
+  .gallery-item:hover .gallery-caption { transform: translateY(0); }
+
+  /* STATEMENT */
+  .statement-section {
+    padding: 12rem 4rem;
+    background: var(--dark-mid);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  .statement-line {
+    width: 1px;
+    height: 80px;
+    background: var(--magenta);
+    margin-bottom: 3rem;
+    opacity: .6;
+  }
+  .statement-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4.5vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    max-width: 900px;
+    letter-spacing: -.01em;
+  }
+  .statement-text em {
+    font-style: italic;
+    color: var(--magenta-light);
+  }
+  .statement-author {
+    margin-top: 2.5rem;
+    font-size: .8rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gray-light);
+  }
+
+  /* EXPAND FEATURE */
+  .expand-section {
+    padding: 8rem 0;
+    background: var(--dark);
+    overflow: hidden;
+  }
+  .expand-title {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    margin-bottom: 5rem;
+    padding: 0 4rem;
+  }
+  .expand-title em { font-style: italic; color: var(--magenta-light); }
+  .expand-items {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .expand-item {
+    position: relative;
+    height: 80px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: height .6s cubic-bezier(.16,1,.3,1);
+    background: var(--dark-mid);
+  }
+  .expand-item.is-open { height: 340px; }
+  .expand-item-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4rem;
+    height: 80px;
+    flex-shrink: 0;
+  }
+  .expand-item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .expand-num {
+    font-size: .7rem;
+    letter-spacing: .2em;
+    color: var(--magenta);
+    text-transform: uppercase;
+    margin-right: 1.5rem;
+  }
+  .expand-arrow {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .4s, background .2s, border-color .2s;
+    font-size: 1rem;
+  }
+  .expand-item.is-open .expand-arrow {
+    transform: rotate(45deg);
+    background: var(--magenta);
+    border-color: var(--magenta);
+  }
+  .expand-item-body {
+    padding: 0 4rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .expand-item-body p {
+    font-weight: 300;
+    color: var(--gray-light);
+    line-height: 1.8;
+    font-size: .95rem;
+  }
+  .expand-item-img {
+    height: 220px;
+    overflow: hidden;
+    border-radius: 3px;
+  }
+  .expand-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.1);
+    transition: transform .6s;
+  }
+  .expand-item.is-open .expand-item-img img { transform: scale(1); }
+  .expand-divider {
+    height: 1px;
+    background: rgba(255,255,255,.06);
+    margin: 0;
+  }
+
+  /* CTA */
+  .cta-section {
+    padding: 14rem 4rem;
+    background: var(--dark);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-bg-circle {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    border: 1px solid rgba(192,68,122,.12);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  .cta-bg-circle:nth-child(2) { width: 900px; height: 900px; border-color: rgba(192,68,122,.07); }
+  .cta-bg-circle:nth-child(3) { width: 1100px; height: 1100px; border-color: rgba(192,68,122,.04); }
+  .cta-label {
+    font-size: .75rem;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 1.5rem;
+  }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: .95;
+    margin-bottom: 3rem;
+  }
+  .cta-title em { font-style: italic; color: var(--magenta-light); }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 2.5rem;
+    background: var(--magenta);
+    color: #fff;
+    text-decoration: none;
+    font-size: .85rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    border-radius: 100px;
+    transition: background .25s, transform .2s;
+  }
+  .cta-btn:hover { background: var(--magenta-light); transform: scale(1.03); }
+  .cta-btn svg { width: 16px; height: 16px; }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem 4rem;
+    background: var(--dark);
+    border-top: 1px solid rgba(255,255,255,.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  footer .f-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: .1em;
+  }
+  footer small {
+    font-size: .75rem;
+    color: var(--gray-light);
+    letter-spacing: .05em;
+  }
+
+  /* PLACEHOLDER IMAGES via CSS */
+  .img-placeholder {
+    background: linear-gradient(135deg, #2C2C2E 0%, #1A1A1B 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(192,68,122,.4);
+    font-size: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">NED</a>
+  <ul class="nav-links">
+    <li><a href="#">Nosotros</a></li>
+    <li><a href="#">Servicios</a></li>
+    <li><a href="#">Portafolio</a></li>
+    <li><a href="#">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Diseño · Estrategia · Impacto</p>
+    <h1 class="hero-title">
+      <span class="line"><span>Diseño que</span></span>
+      <span class="line"><span><em>transforma</em></span></span>
+      <span class="line"><span>el mundo</span></span>
+    </h1>
+    <p class="hero-sub">Creamos experiencias visuales que conectan marcas con personas a través del poder del diseño.</p>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee">
+    <span>Branding</span><span class="marquee-dot">·</span>
+    <span>Identidad Visual</span><span class="marquee-dot">·</span>
+    <span>Diseño Web</span><span class="marquee-dot">·</span>
+    <span>Estrategia Creativa</span><span class="marquee-dot">·</span>
+    <span>Motion Design</span><span class="marquee-dot">·</span>
+    <span>UX/UI</span><span class="marquee-dot">·</span>
+    <span>Fotografía</span><span class="marquee-dot">·</span>
+    <span>Branding</span><span class="marquee-dot">·</span>
+    <span>Identidad Visual</span><span class="marquee-dot">·</span>
+    <span>Diseño Web</span><span class="marquee-dot">·</span>
+    <span>Estrategia Creativa</span><span class="marquee-dot">·</span>
+    <span>Motion Design</span><span class="marquee-dot">·</span>
+    <span>UX/UI</span><span class="marquee-dot">·</span>
+    <span>Fotografía</span><span class="marquee-dot">·</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-text">
+    <h2>Creamos <em>historias</em> visuales memorables</h2>
+    <p>En NED fusionamos el pensamiento estratégico con la sensibilidad artística para construir marcas que resuenan profundamente con sus audiencias.</p>
+    <p>Cada proyecto es una oportunidad para empujar los límites del diseño y crear algo verdaderamente extraordinario.</p>
+  </div>
+  <div class="about-visual">
+    <div class="about-img-wrap" id="aboutImg">
+      <div style="width:100%;height:100%;background:linear-gradient(160deg,#3D1A2A 0%,#1A1A1B 60%,#2C1020 100%);display:flex;align-items:center;justify-content:center;">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" opacity=".4">
+          <polygon points="40,5 72,22 72,58 40,75 8,58 8,22" stroke="#C0447A" stroke-width="1.5" fill="none"/>
+          <polygon points="40,18 60,28 60,52 40,62 20,52 20,28" stroke="#C0447A" stroke-width="1" fill="none" opacity=".5"/>
+          <text x="40" y="44" text-anchor="middle" font-family="serif" font-size="18" fill="#C0447A" font-style="italic">NED</text>
+        </svg>
+      </div>
+    </div>
+    <div class="about-counter">
+      <strong>8+</strong>
+      <small>Años</small>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services-section" id="services">
+  <div class="services-header">
+    <h2>Nuestros<br><em>Servicios</em></h2>
+    <p>Soluciones creativas integrales para marcas que quieren dejar una huella duradera en el mercado.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card" id="sc1">
+      <div style="width:100%;height:100%;background:linear-gradient(170deg,#2C1828 0%,#1A1A1B 80%);position:absolute;top:0;left:0;" class="service-card-img"></div>
+      <div class="service-card-overlay">
+        <span class="service-num">01</span>
+        <h3 class="service-name">Branding<br>Estratégico</h3>
+        <p class="service-desc">Construimos identidades de marca que generan conexiones emocionales duraderas con tu audiencia.</p>
+      </div>
+    </div>
+    <div class="service-card" id="sc2">
+      <div style="width:100%;height:100%;background:linear-gradient(170deg,#1A2028 0%,#1A1A1B 80%);position:absolute;top:0;left:0;" class="service-card-img"></div>
+      <div class="service-card-overlay">
+        <span class="service-num">02</span>
+        <h3 class="service-name">Diseño<br>Digital</h3>
+        <p class="service-desc">Experiencias digitales que combinan estética y funcionalidad para maximizar el impacto.</p>
+      </div>
+    </div>
+    <div class="service-card" id="sc3">
+      <div style="width:100%;height:100%;background:linear-gradient(170deg,#281A20 0%,#1A1A1B 80%);position:absolute;top:0;left:0;" class="service-card-img"></div>
+      <div class="service-card-overlay">
+        <span class="service-num">03</span>
+        <h3 class="service-name">Estrategia<br>Creativa</h3>
+        <p class="service-desc">Planificación creativa integral alineada con los objetivos de negocio de tu empresa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <p class="gallery-label">Portafolio Selecto</p>
+  <div class="gallery-grid">
+    <div class="gallery-item" id="gi1">
+      <div class="gallery-img-inner">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#3D1A2A,#2C2C2E);display:flex;align-items:center;justify-content:center;min-height:360px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" opacity=".5">
+            <rect x="5" y="5" width="50" height="50" rx="3" stroke="#C0447A" stroke-width="1"/>
+            <line x1="5" y1="20" x2="55" y2="20" stroke="#C0447A" stroke-width=".5"/>
+            <circle cx="30" cy="37" r="10" stroke="#C0447A" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-caption">Identidad Corporativa</div>
+    </div>
+    <div class="gallery-item" id="gi2">
+      <div class="gallery-img-inner">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1A1A2A,#2C1828);display:flex;align-items:center;justify-content:center;min-height:300px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" opacity=".5">
+            <circle cx="30" cy="30" r="24" stroke="#C0447A" stroke-width="1"/>
+            <path d="M18 30 Q30 15 42 30 Q30 45 18 30Z" stroke="#C0447A" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-caption">Diseño Editorial</div>
+    </div>
+    <div class="gallery-item" id="gi3">
+      <div class="gallery-img-inner">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#2C1820,#1A2028);display:flex;align-items:center;justify-content:center;min-height:400px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" opacity=".5">
+            <polygon points="30,5 55,20 55,45 30,55 5,45 5,20" stroke="#C0447A" stroke-width="1" fill="none"/>
+            <text x="30" y="33" text-anchor="middle" font-family="serif" font-size="12" fill="#C0447A" font-style="italic">NED</text>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-caption">Packaging Premium</div>
+    </div>
+    <div class="gallery-item" id="gi4">
+      <div class="gallery-img-inner">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1A2820,#281A28);display:flex;align-items:center;justify-content:center;min-height:300px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" opacity=".5">
+            <rect x="8" y="8" width="20" height="44" rx="2" stroke="#C0447A" stroke-width="1"/>
+            <rect x="32" y="20" width="20" height="32" rx="2" stroke="#C0447A" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-caption">Motion Graphics</div>
+    </div>
+    <div class="gallery-item" id="gi5">
+      <div class="gallery-img-inner">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#28201A,#1A1A2A);display:flex;align-items:center;justify-content:center;min-height:360px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" opacity=".5">
+            <path d="M10 50 Q20 20 30 30 Q40 40 50 10" stroke="#C0447A" stroke-width="1.5" fill="none"/>
+            <circle cx="10" cy="50" r="3" fill="#C0447A" opacity=".6"/>
+            <circle cx="50" cy="10" r="3" fill="#C0447A" opacity=".6"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-caption">Campaña Digital</div>
+    </div>
+    <div class="gallery-item" id="gi6">
+      <div class="gallery-img-inner">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#201A28,#2A1A1A);display:flex;align-items:center;justify-content:center;min-height:280px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" opacity=".5">
+            <line x1="10" y1="30" x2="50" y2="30" stroke="#C0447A" stroke-width="1"/>
+            <line x1="30" y1="10" x2="30" y2="50" stroke="#C0447A" stroke-width="1"/>
+            <circle cx="30" cy="30" r="15" stroke="#C0447A" stroke-width="1" fill="none"/>
+            <circle cx="30" cy="30" r="5" fill="#C0447A" opacity=".4"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-caption">Fotografía Creativa</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="statement-section" id="statement">
+  <div class="statement-line"></div>
+  <blockquote class="statement-text">
+    "El diseño no es solo como se <em>ve</em> o como se <em>siente</em> —<br>el diseño es cómo <em>funciona</em>."
+  </blockquote>
+  <p class="statement-author">Filosofía NED</p>
+</section>
+
+<!-- EXPAND ITEMS -->
+<section class="expand-section" id="process">
+  <h2 class="expand-title">Nuestro <em>Proceso</em></h2>
+  <div class="expand-items">
+    <div class="expand-item is-open" data-item="1">
+      <div class="expand-item-header">
+        <div style="display:flex;align-items:center">
+          <span class="expand-num">01</span>
+          <h3 class="expand-item-title">Descubrimiento</h3>
+        </div>
+        <div class="expand-arrow">+</div>
+      </div>
+      <div class="expand-item-body">
+        <p>Comenzamos con una inmersión profunda en tu marca, mercado y audiencia. Entendemos no solo lo que quieres, sino lo que necesitas para destacarte en un mercado cada vez más competitivo.</p>
+        <div class="expand-item-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#3D1A2A,#1A1A1B);display:flex;align-items:center;justify-content:center;">
+            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" opacity=".5">
+              <circle cx="25" cy="25" r="20" stroke="#C0447A" stroke-width="1"/>
+              <circle cx="25" cy="25" r="8" stroke="#C0447A" stroke-width="1" fill="none"/>
+              <line x1="30" y1="30" x2="40" y2="40" stroke="#C0447A" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="expand-divider"></div>
+    <div class="expand-item" data-item="2">
+      <div class="expand-item-header">
+        <div style="display:flex;align-items:center">
+          <span class="expand-num">02</span>
+          <h3 class="expand-item-title">Estrategia</h3>
+        </div>
+        <div class="expand-arrow">+</div>
+      </div>
+      <div class="expand-item-body">
+        <p>Traducimos los insights del descubrimiento en una hoja de ruta creativa clara, con objetivos medibles y una dirección estética definida que guiará cada decisión de diseño.</p>
+        <div class="expand-item-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#1A1A2A,#2C1828);display:flex;align-items:center;justify-content:center;">
+            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" opacity=".5">
+              <rect x="5" y="5" width="40" height="40" rx="3" stroke="#C0447A" stroke-width="1"/>
+              <line x1="5" y1="18" x2="45" y2="18" stroke="#C0447A" stroke-width=".5"/>
+              <rect x="10" y="25" width="12" height="14" rx="1" stroke="#C0447A" stroke-width=".8" fill="none"/>
+              <rect x="27" y="22" width="12" height="17" rx="1" stroke="#C0447A" stroke-width=".8" fill="none"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="expand-divider"></div>
+    <div class="expand-item" data-item="3">
+      <div class="expand-item-header">
+        <div style="display:flex;align-items:center">
+          <span class="expand-num">03</span>
+          <h3 class="expand-item-title">Creación</h3>
+        </div>
+        <div class="expand-arrow">+</div>
+      </div>
+      <div class="expand-item-body">
+        <p>Aquí el diseño cobra vida. Nuestro equipo trabaja de manera iterativa, refinando cada detalle hasta alcanzar una solución que supere las expectativas y conecte auténticamente.</p>
+        <div class="expand-item-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#2C1820,#281A20);display:flex;align-items:center;justify-content:center;">
+            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" opacity=".5">
+              <path d="M10 40 Q15 20 25 15 Q35 10 40 10" stroke="#C0447A" stroke-width="1.5" fill="none"/>
+              <path d="M8 43 L12 38 L16 42Z" fill="#C0447A" opacity=".5"/>
+              <circle cx="40" cy="10" r="4" stroke="#C0447A" stroke-width="1" fill="none"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="expand-divider"></div>
+    <div class="expand-item" data-item="4">
+      <div class="expand-item-header">
+        <div style="display:flex;align-items:center">
+          <span class="expand-num">04</span>
+          <h3 class="expand-item-title">Entrega</h3>
+        </div>
+        <div class="expand-arrow">+</div>
+      </div>
+      <div class="expand-item-body">
+        <p>Entregamos cada proyecto con documentación completa, archivos listos para producción y soporte post-lanzamiento para asegurar que tu marca brille en cada punto de contacto.</p>
+        <div class="expand-item-img">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#1A2820,#201A2A);display:flex;align-items:center;justify-content:center;">
+            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" opacity=".5">
+              <rect x="8" y="6" width="34" height="42" rx="3" stroke="#C0447A" stroke-width="1"/>
+              <line x1="15" y1="18" x2="35" y2="18" stroke="#C0447A" stroke-width=".8"/>
+              <line x1="15" y1="26" x2="35" y2="26" stroke="#C0447A" stroke-width=".8"/>
+              <line x1="15" y1="34" x2="27" y2="34" stroke="#C0447A" stroke-width=".8"/>
+              <circle cx="36" cy="37" r="8" stroke="#C0447A" stroke-width="1" fill="none"/>
+              <path d="M32 37 L35 40 L40 34" stroke="#C0447A" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="cta-bg-circle"></div>
+  <div class="cta-bg-circle"></div>
+  <div class="cta-bg-circle"></div>
+  <div style="position:relative;z-index:2;">
+    <p class="cta-label">Trabajemos juntos</p>
+    <h2 class="cta-title">¿Listo para<br><em>crear algo</em><br>extraordinario?</h2>
+    <a href="#" class="cta-btn">
+      Iniciar Proyecto
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 8h10M9 4l4 4-4 4"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="f-logo">NED</span>
+  <small>© 2026 NED — Diseño & Estrategia Creativa. Todos los derechos reservados.</small>
+</footer>
+
+<!-- GSAP + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor(){
+  requestAnimationFrame(animCursor);
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  rx += (mx - rx) * .12; ry += (my - ry) * .12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+})();
+
+/* ── MARQUEE INFINITE ── */
+(function(){
+  const track = document.getElementById('marquee');
+  const clone = track.cloneNode(true);
+  track.parentElement.appendChild(clone);
+  let x = 0;
+  const speed = 0.6;
+  const totalW = track.scrollWidth;
+  (function move(){
+    requestAnimationFrame(move);
+    x -= speed;
+    if(x <= -totalW) x = 0;
+    track.style.transform = `translateX(${x}px)`;
+    clone.style.transform = `translateX(${x + totalW}px)`;
+  })();
+})();
+
+/* ── HERO ENTRANCE ── */
+const tl = gsap.timeline({ delay: .2 });
+tl.to('.hero-eyebrow', { opacity: 1, y: 0, duration: .8, ease: 'power3.out' })
+  .to('.hero-title .line span', {
+    y: 0, duration: 1, stagger: .12, ease: 'power4.out'
+  }, '-=.4')
+  .to('.hero-sub', { opacity: 1, y: 0, duration: .8, ease: 'power3.out' }, '-=.5')
+  .to('.hero-scroll', { opacity: 1, duration: .6, ease: 'power2.out' }, '-=.2');
+
+/* ── HERO PARALLAX ── */
+gsap.to('.hero-bg', {
+  y: '30%',
+  ease: 'none',
+  scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.5 }
+});
+gsap.to('.hero-content', {
+  y: '25%',
+  opacity: 0,
+  ease: 'none',
+  scrollTrigger: { trigger: '.hero', start: 'top top', end: '80% top', scrub: 1 }
+});
+gsap.to('.hero-grid', {
+  y: '20%',
+  ease: 'none',
+  scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 2 }
+});
+
+/* ── ABOUT SECTION ── */
+gsap.from('.about-text h2', {
+  y: 60, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.about-section', start: 'top 70%' }
+});
+gsap.from('.about-text p', {
+  y: 40, opacity: 0, duration: 1, stagger: .18, ease: 'power3.out',
+  scrollTrigger: { trigger: '.about-section', start: 'top 65%' }
+});
+gsap.from('.about-visual', {
+  x: 80, opacity: 0, duration: 1.2, ease: 'power3.out',
+  scrollTrigger: { trigger: '.about-section', start: 'top 65%' }
+});
+/* Parallax image inside about */
+gsap.to('#aboutImg img, #aboutImg > div', {
+  y: '-8%',
+  ease: 'none',
+  scrollTrigger: { trigger: '.about-section', start: 'top bottom', end: 'bottom top', scrub: 1.5 }
+});
+gsap.from('.about-counter', {
+  scale: .6, opacity: 0, duration: .8, ease: 'back.out(1.8)',
+  scrollTrigger: { trigger: '.about-section', start: 'top 55%' }
+});
+
+/* ── SERVICES SECTION ── */
+gsap.from('.services-header h2', {
+  x: -80, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.services-section', start: 'top 70%' }
+});
+gsap.from('.services-header p', {
+  x: 50, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.services-section', start: 'top 65%' }
+});
+document.querySelectorAll('.service-card').forEach((card, i) => {
+  gsap.from(card, {
+    y: 80 + i * 20, opacity: 0, duration: 1, ease: 'power3.out',
+    scrollTrigger: { trigger: '.services-grid', start: 'top 75%' },
+    delay: i * .12
+  });
+  /* Scale expand effect on scroll */
+  gsap.fromTo(card,
+    { scale: .92 },
+    { scale: 1, ease: 'none',
+      scrollTrigger: {
+        trigger: card, start: 'top 85%', end: 'top 30%', scrub: 1.2
+      }
+    }
+  );
+});
+
+/* ── GALLERY PARALLAX EXPAND ── */
+gsap.from('.gallery-label', {
+  opacity: 0, y: 30, duration: .8,
+  scrollTrigger: { trigger: '.gallery-section', start: 'top 75%' }
+});
+
+const galleryParallax = [
+  { id: '#gi1', y: '15%', scale: 1.05 },
+  { id: '#gi2', y: '-12%', scale: 1.08 },
+  { id: '#gi3', y: '10%', scale: 1.04 },
+  { id: '#gi4', y: '-10%', scale: 1.06 },
+  { id: '#gi5', y: '14%', scale: 1.05 },
+  { id: '#gi6', y: '-8%', scale: 1.07 },
+];
+
+galleryParallax.forEach(({ id, y, scale }) => {
+  const el = document.querySelector(id);
+  if (!el) return;
+  const inner = el.querySelector('.gallery-img-inner');
+  /* Entrance: expand from small */
+  gsap.from(el, {
+    scale: .85, opacity: 0, duration: 1.1, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+  /* Continuous parallax scroll */
+  gsap.to(inner, {
+    y, ease: 'none',
+    scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1.5 }
+  });
+  /* Scale expansion as item enters viewport */
+  gsap.fromTo(el,
+    { scale: .9 },
+    { scale: 1, ease: 'none',
+      scrollTrigger: {
+        trigger: el, start: 'top 90%', end: 'center 50%', scrub: 1
+      }
+    }
+  );
+});
+
+/* ── STATEMENT ── */
+gsap.from('.statement-line', {
+  scaleY: 0, duration: .8, ease: 'power3.out',
+  scrollTrigger: { trigger: '.statement-section', start: 'top 70%' }
+});
+gsap.from('.statement-text', {
+  y: 50, opacity: 0, duration: 1.2, ease: 'power3.out',
+  scrollTrigger: { trigger: '.statement-section', start: 'top 65%' }
+});
+gsap.from('.statement-author', {
+  opacity: 0, y: 20, duration: .8, ease: 'power3.out',
+  scrollTrigger: { trigger: '.statement-section', start: 'top 55%' }
+});
+
+/* ── PROCESS EXPAND ── */
+gsap.from('.expand-title', {
+  y: 50, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.expand-section', start: 'top 70%' }
+});
+document.querySelectorAll('.expand-item').forEach((item, i) => {
+  gsap.from(item, {
+    x: i % 2 === 0 ? -40 : 40, opacity: 0, duration: .8, ease: 'power3.out',
+    scrollTrigger: { trigger: item, start: 'top 80%' }
+  });
+});
+
+/* ACCORDION */
+document.querySelectorAll('.expand-item').forEach(item => {
+  item.querySelector('.expand-item-header').addEventListener('click', () => {
+    const isOpen = item.classList.contains('is-open');
+    document.querySelectorAll('.expand-item').forEach(i => i.classList.remove('is-open'));
+    if (!isOpen) item.classList.add('is-open');
+  });
+});
+
+/* ── CTA SECTION ── */
+gsap.from('.cta-label, .cta-title, .cta-btn', {
+  y: 40, opacity: 0, duration: 1, stagger: .2, ease: 'power3.out',
+  scrollTrigger: { trigger: '.cta-section', start: 'top 65%' }
+});
+/* Rotating circles */
+gsap.to('.cta-bg-circle:nth-child(1)', {
+  rotation: 360, duration: 40, repeat: -1, ease: 'none', transformOrigin: 'center center'
+});
+gsap.to('.cta-bg-circle:nth-child(2)', {
+  rotation: -360, duration: 60, repeat: -1, ease: 'none', transformOrigin: 'center center'
+});
+/* Scale up circles on scroll */
+const circles = document.querySelectorAll('.cta-bg-circle');
+circles.forEach((c, i) => {
+  gsap.fromTo(c,
+    { scale: .6, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 1.5, ease: 'power3.out',
+      scrollTrigger: { trigger: '.cta-section', start: 'top 70%' },
+      delay: i * .15
+    }
+  );
+});
+
+/* ── FOOTER ── */
+gsap.from('footer', {
+  opacity: 0, duration: .8, ease: 'power3.out',
+  scrollTrigger: { trigger: 'footer', start: 'top 90%' }
+});
+
+/* ── HORIZONTAL SCROLL FEEL (smooth) ── */
+let lastY = 0;
+document.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  lastY = y;
+});
+</script>
+</body>
+</html>
