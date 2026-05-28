@@ -741,20 +741,14 @@ footer {
   line-height: 0;
   background: #1a1a1a;
   position: relative;
-  /* altura fija para que la imagen siempre sea visible sin importar proporciones */
-  min-height: 320px;
-  max-height: 480px;
-  display: flex;
-  align-items: flex-start;
+  height: 380px;        /* altura fija — igual para todas las imágenes */
 }
 .browser-screen img {
   width: 100%;
-  height: auto;
-  min-height: 320px;
-  object-fit: cover;
-  object-position: top center;
+  height: 100%;
+  object-fit: cover;          /* rellena el contenedor sin deformar */
+  object-position: top center; /* muestra siempre la parte superior */
   display: block;
-  flex-shrink: 0;
   transition: transform .6s cubic-bezier(.16,1,.3,1);
 }
 .browser-mockup:hover .browser-screen img {
