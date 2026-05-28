@@ -567,6 +567,203 @@ footer {
   .footer-top { grid-template-columns:1fr; }
   .hero-actions { flex-direction:column; align-items:center; }
 }
+
+/* ══════════════════════════════════════════════════
+   SHOWCASE — ZIG-ZAG CASOS DE ÉXITO
+══════════════════════════════════════════════════ */
+.showcase-section {
+  padding: clamp(5rem,10vw,9rem) 0;
+  background: var(--dark);
+}
+.showcase-header {
+  text-align: center;
+  margin-bottom: clamp(3.5rem,6vw,5.5rem);
+}
+.showcase-header .section-sub { margin-inline: auto; margin-top: .8rem; }
+
+/* Fila ZigZag */
+.showcase-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(2.5rem,5vw,5rem);
+  margin-bottom: clamp(4rem,8vw,7rem);
+}
+.showcase-row:last-child { margin-bottom: 0; }
+/* Fila par → imagen a la izquierda */
+.showcase-row.reverse { flex-direction: row-reverse; }
+
+/* Columna de texto */
+.showcase-text {
+  flex: 1;
+  min-width: 0;
+}
+.showcase-case-num {
+  font-size: .68rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--mag);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+.showcase-case-num::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--mag);
+}
+.showcase-text h3 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem,3vw,2.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+}
+.showcase-text h3 em {
+  font-style: italic;
+  color: var(--mag-light);
+}
+.showcase-text p {
+  font-size: .95rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+.showcase-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.8rem;
+}
+.showcase-pill {
+  padding: .28rem .85rem;
+  background: var(--mag-dim);
+  border: 1px solid rgba(192,68,122,.2);
+  border-radius: 100px;
+  font-size: .7rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mag-light);
+}
+.showcase-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  font-size: .8rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mag);
+  transition: gap var(--trans), color var(--trans);
+}
+.showcase-link:hover { gap: .9rem; color: var(--mag-light); }
+.showcase-link svg { width: 14px; height: 14px; }
+
+/* Columna de imagen (mockup) */
+.showcase-visual {
+  flex: 1.1;
+  min-width: 0;
+}
+
+/* ── BROWSER MOCKUP ── */
+.browser-mockup {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #1E1E20;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.06) inset,
+    0 30px 80px rgba(0,0,0,.6),
+    0 0 0 1px rgba(255,255,255,.06);
+  transition: transform var(--trans), box-shadow var(--trans);
+  will-change: transform;
+}
+.browser-mockup:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.08) inset,
+    0 40px 100px rgba(192,68,122,.15),
+    0 0 0 1px rgba(192,68,122,.15);
+}
+
+/* Barra superior del navegador */
+.browser-bar {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  padding: .7rem 1.1rem;
+  background: #2A2A2C;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+}
+.browser-dots {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.browser-dots span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.browser-dots span:nth-child(1) { background: #FF5F57; }
+.browser-dots span:nth-child(2) { background: #FEBC2E; }
+.browser-dots span:nth-child(3) { background: #28C840; }
+.browser-url-bar {
+  flex: 1;
+  background: rgba(255,255,255,.06);
+  border-radius: 6px;
+  padding: .3rem .8rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.browser-url-bar svg {
+  width: 11px;
+  height: 11px;
+  stroke: var(--text-muted);
+  fill: none;
+  stroke-width: 1.5;
+  flex-shrink: 0;
+}
+.browser-url-text {
+  font-size: .72rem;
+  color: var(--text-muted);
+  letter-spacing: .02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.browser-screen {
+  overflow: hidden;
+  line-height: 0;
+  aspect-ratio: 16/10;
+  background: var(--dark-mid);
+  position: relative;
+}
+.browser-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform .6s cubic-bezier(.16,1,.3,1);
+}
+.browser-mockup:hover .browser-screen img {
+  transform: scale(1.03);
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .showcase-row,
+  .showcase-row.reverse {
+    flex-direction: column;
+  }
+  .showcase-visual { width: 100%; }
+  .showcase-text   { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -672,74 +869,164 @@ footer {
 </div>
 
 <!-- ════════════════════════════════════════
-     SERVICIOS
+     SHOWCASE — CASOS DE ÉXITO
 ════════════════════════════════════════ -->
-<section class="services-section" id="servicios" aria-labelledby="svc-title">
+<section class="showcase-section" id="servicios" aria-labelledby="showcase-title">
   <div class="container">
-    <div class="services-header">
-      <div>
-        <span class="tag">Lo que hacemos</span>
-        <h2 class="section-title" id="svc-title">Soluciones que <em>escalan</em><br>con tu negocio</h2>
-      </div>
+
+    <!-- Header -->
+    <div class="showcase-header">
+      <span class="tag">Portafolio Real</span>
+      <h2 class="section-title" id="showcase-title">Soluciones que ya están<br><em>transformando</em> empresas</h2>
       <p class="section-sub">
-        Diseñamos e implementamos tecnología que trabaja por ti las 24 horas, reduce errores y libera a tu equipo para lo que realmente importa.
+        Tres casos reales donde convertimos procesos manuales, caóticos o inexistentes en plataformas digitales de alto impacto.
       </p>
     </div>
 
-    <div class="services-grid">
-      <!-- Card 1 -->
-      <article class="svc-card" id="svc-1">
-        <div class="svc-card-bg svc-card-bg--1" aria-hidden="true"></div>
-        <div class="svc-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        </div>
-        <span class="svc-num">01</span>
-        <h3 class="svc-name">Automatización<br>de Procesos</h3>
-        <p class="svc-desc">
-          Conectamos tus apps, eliminamos tareas repetitivas y construimos flujos inteligentes con Make, n8n, Zapier o código a medida. Desde facturación automática hasta reportes en tiempo real.
-        </p>
-        <a href="#contacto" class="svc-more" aria-label="Conocer más sobre automatización de procesos">
-          Conocer más
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-        </a>
-      </article>
+    <!-- ── CASO 1: Texto izq | Imagen der ── -->
+    <article class="showcase-row" id="caso-1">
 
-      <!-- Card 2 -->
-      <article class="svc-card" id="svc-2">
-        <div class="svc-card-bg svc-card-bg--2" aria-hidden="true"></div>
-        <div class="svc-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
-        </div>
-        <span class="svc-num">02</span>
-        <h3 class="svc-name">Chatbots<br>Inteligentes con IA</h3>
-        <p class="svc-desc">
-          Asistentes virtuales entrenados con tu información que atienden clientes, califican leads y responden consultas 24/7 en WhatsApp, web o Instagram — sin intervención humana.
+      <div class="showcase-text">
+        <p class="showcase-case-num">Caso 01</p>
+        <h3>Automatización <em>Regulatoria</em><br>y Ambiental</h3>
+        <p>
+          Diseñamos un software analítico a medida para la gestión integral de normativas PMA y PSM.
+          La plataforma centraliza guías de aplicabilidad, cruza automáticamente variables normativas
+          complejas y genera reportes de cumplimiento con un solo clic — reduciendo en un <strong style="color:var(--mag-light)">65% el tiempo</strong>
+          dedicado a revisiones manuales de requerimientos ambientales.
         </p>
-        <a href="#contacto" class="svc-more" aria-label="Conocer más sobre chatbots con IA">
-          Conocer más
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        <div class="showcase-pills">
+          <span class="showcase-pill">Normativa PMA/PSM</span>
+          <span class="showcase-pill">Motor de reglas</span>
+          <span class="showcase-pill">Reportes automáticos</span>
+          <span class="showcase-pill">Auditoría digital</span>
+        </div>
+        <a href="#contacto" class="showcase-link" aria-label="Solicitar solución similar">
+          Quiero algo similar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
         </a>
-      </article>
+      </div>
 
-      <!-- Card 3 -->
-      <article class="svc-card" id="svc-3">
-        <div class="svc-card-bg svc-card-bg--3" aria-hidden="true"></div>
-        <div class="svc-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+      <div class="showcase-visual">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-url-bar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="browser-url-text">app.ned.co/guia-aplicabilidad-pma</span>
+            </div>
+          </div>
+          <div class="browser-screen">
+            <img
+              src="captures/Guia de Aplicabilidad PMA-PSM.png"
+              alt="Plataforma Guía de Aplicabilidad PMA-PSM — Automatización Regulatoria y Ambiental"
+              loading="lazy"
+            >
+          </div>
         </div>
-        <span class="svc-num">03</span>
-        <h3 class="svc-name">Consultoría<br>Tecnológica</h3>
-        <p class="svc-desc">
-          Auditamos tu stack tecnológico, identificamos cuellos de botella y diseñamos una hoja de ruta digital realista. Te acompañamos desde la estrategia hasta la implementación.
+      </div>
+
+    </article>
+
+    <!-- ── CASO 2: Imagen izq | Texto der (reverse) ── -->
+    <article class="showcase-row reverse" id="caso-2">
+
+      <div class="showcase-text">
+        <p class="showcase-case-num">Caso 02</p>
+        <h3>Logística <em>Inteligente</em><br>y Gestión de Riesgos</h3>
+        <p>
+          Implementamos un sistema de inteligencia operacional para el monitoreo en tiempo real de orden
+          público y transitabilidad vial. La plataforma Risk-Intel integra fuentes de datos heterogéneas,
+          aplica algoritmos de clasificación de riesgo y emite alertas automáticas, permitiendo a los
+          equipos de logística tomar <strong style="color:var(--mag-light)">decisiones en segundos</strong> ante incidentes en ruta.
         </p>
-        <a href="#contacto" class="svc-more" aria-label="Conocer más sobre consultoría tecnológica">
-          Conocer más
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        <div class="showcase-pills">
+          <span class="showcase-pill">Tiempo real</span>
+          <span class="showcase-pill">Alertas automáticas</span>
+          <span class="showcase-pill">Análisis de riesgo</span>
+          <span class="showcase-pill">Integración de datos</span>
+        </div>
+        <a href="#contacto" class="showcase-link" aria-label="Solicitar solución similar">
+          Quiero algo similar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
         </a>
-      </article>
-    </div>
+      </div>
+
+      <div class="showcase-visual">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-url-bar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="browser-url-text">app.ned.co/risk-intel/dashboard</span>
+            </div>
+          </div>
+          <div class="browser-screen">
+            <img
+              src="captures/Risk-Intel.png"
+              alt="Plataforma Risk-Intel — Logística Inteligente y Gestión de Riesgos"
+              loading="lazy"
+            >
+          </div>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ── CASO 3: Texto izq | Imagen der ── -->
+    <article class="showcase-row" id="caso-3">
+
+      <div class="showcase-text">
+        <p class="showcase-case-num">Caso 03</p>
+        <h3>Monitoreo y Seguimiento<br><em>Satelital</em> en Campo</h3>
+        <p>
+          Desarrollamos una aplicación de trazabilidad geográfica para el control preciso de flotas,
+          maquinaria y personal en terreno. Field Tracker combina telemetría GPS, geofencing configurable
+          y reportes de actividad, entregando a los coordinadores una <strong style="color:var(--mag-light)">visibilidad total del campo</strong>
+          desde cualquier dispositivo, en tiempo real.
+        </p>
+        <div class="showcase-pills">
+          <span class="showcase-pill">GPS / Telemetría</span>
+          <span class="showcase-pill">Geofencing</span>
+          <span class="showcase-pill">Control de flotas</span>
+          <span class="showcase-pill">Responsive</span>
+        </div>
+        <a href="#contacto" class="showcase-link" aria-label="Solicitar solución similar">
+          Quiero algo similar
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <div class="showcase-visual">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="browser-url-bar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="browser-url-text">app.ned.co/field-tracker/map</span>
+            </div>
+          </div>
+          <div class="browser-screen">
+            <img
+              src="captures/Field Tracker.png"
+              alt="Field Tracker — Monitoreo y Seguimiento Satelital en Campo"
+              loading="lazy"
+            >
+          </div>
+        </div>
+      </div>
+
+    </article>
+
   </div>
 </section>
+
 
 <!-- STATS -->
 <div class="stats-band" aria-label="Estadísticas NED">
@@ -1153,6 +1440,66 @@ document.getElementById('contactForm').addEventListener('submit',function(e){
   btn.textContent='✓ Mensaje enviado — Te contactamos pronto';
   btn.style.background='#2C7A4B';
   btn.disabled=true;
+});
+
+
+/* ── SHOWCASE ZIG-ZAG ── */
+document.querySelectorAll('.showcase-row').forEach((row, i) => {
+  const isReverse = row.classList.contains('reverse');
+  const txt = row.querySelector('.showcase-text');
+  const vis = row.querySelector('.showcase-visual');
+
+  /* Texto: entra desde el lado donde está */
+  gsap.from(txt, {
+    x: isReverse ? 60 : -60,
+    opacity: 0,
+    duration: 1.05,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: row, start: 'top 75%' }
+  });
+
+  /* Mockup: entra desde el lado contrario */
+  gsap.from(vis, {
+    x: isReverse ? -60 : 60,
+    opacity: 0,
+    duration: 1.05,
+    ease: 'power3.out',
+    delay: 0.15,
+    scrollTrigger: { trigger: row, start: 'top 75%' }
+  });
+
+  /* Parallax / zoom en la imagen del mockup */
+  const img = vis.querySelector('.browser-screen img');
+  if (img) {
+    gsap.fromTo(img,
+      { scale: 1 },
+      {
+        scale: 1.08,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: vis,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
+        }
+      }
+    );
+  }
+
+  /* Scale suave del mockup al entrar */
+  gsap.fromTo(vis.querySelector('.browser-mockup'),
+    { scale: 0.93 },
+    {
+      scale: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: vis,
+        start: 'top 88%',
+        end: 'top 40%',
+        scrub: 1
+      }
+    }
+  );
 });
 
 /* ── PROGRESS BAR ── */
