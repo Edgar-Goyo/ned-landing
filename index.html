@@ -737,17 +737,12 @@ footer {
   text-overflow: ellipsis;
 }
 .browser-screen {
-  overflow: hidden;
   background: #111113;
   position: relative;
-  /* Sin altura fija: la imagen define su propia altura naturalmente */
 }
 .browser-screen img {
   width: 100%;
-  height: auto;          /* respeta las proporciones reales de la imagen */
-  max-height: 480px;     /* tope para imágenes muy largas */
-  object-fit: cover;
-  object-position: top center;
+  height: auto;
   display: block;
   transition: transform .6s cubic-bezier(.16,1,.3,1);
 }
