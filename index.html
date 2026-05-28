@@ -1187,453 +1187,139 @@ document.addEventListener('scroll', () => {
   const y = window.scrollY;
   lastY = y;
 });
-</script>
-</body>
- <!-- ============================================================
-  PEGA ESTE BLOQUE COMPLETO JUSTO ANTES DE </body> EN TU index.html
-  NED — Mejoras Parallax GSAP + ScrollTrigger
-  ============================================================ -->
 
-<!-- GSAP -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+/* ══════════════════════════════════════════════════════════
+   NED — PARALLAX / ZOOM  |  gsap.fromTo() + ScrollTrigger
+   Efecto de expansión suave de imagen basado en scroll
+   scale: 1 → 1.25  |  start:'top top'  |  end:'bottom top'
+   ══════════════════════════════════════════════════════════ */
 
-<style>
-  /* ── ESTILOS GLOBALES DE MEJORA ── */
-  html { scroll-behavior: smooth; }
-
-  /* Cursor personalizado */
-  *, *::before, *::after { cursor: none !important; }
-  #ned-cursor {
-    position: fixed;
-    width: 10px; height: 10px;
-    background: #C0447A;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 99999;
-    transform: translate(-50%, -50%);
-  }
-  #ned-cursor-ring {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1.5px solid rgba(192, 68, 122, 0.7);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 99998;
-    transform: translate(-50%, -50%);
-  }
-
-  /* Imágenes con overflow oculto para parallax */
-  img { display: block; }
-
-  /* Clase helper para contenedores de imagen con parallax */
-  .ned-parallax-wrap {
-    overflow: hidden !important;
-  }
-  .ned-parallax-wrap img,
-  .ned-parallax-wrap > * {
-    will-change: transform;
-  }
-
-  /* Efecto de línea decorativa animada */
-  .ned-reveal-line {
-    overflow: hidden;
-    display: block;
-  }
-
-  /* Overlay suave en secciones hero al hacer scroll */
-  .ned-hero-fade {
-    transition: opacity 0.1s linear;
-  }
-
-  /* Botones y links: escala suave al hover */
-  a, button {
-    transition: transform 0.2s ease, opacity 0.2s ease !important;
-  }
-  a:hover, button:hover {
-    transform: scale(1.03) !important;
-  }
-
-  /* Cards con efecto de elevación */
-  .ned-card-hover {
-    transition: transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s ease !important;
-  }
-  .ned-card-hover:hover {
-    transform: translateY(-8px) scale(1.01) !important;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.18) !important;
-  }
-
-  /* Línea magenta decorativa */
-  .ned-accent-bar {
-    display: block;
-    width: 0;
-    height: 3px;
-    background: #C0447A;
-    margin-top: 12px;
-    border-radius: 2px;
-  }
-</style>
-
-<script>
-(function () {
-  'use strict';
-  gsap.registerPlugin(ScrollTrigger);
-
-  /* ─────────────────────────────────────────
-     1. CURSOR PERSONALIZADO
-  ───────────────────────────────────────── */
-  const cur = document.createElement('div');
-  cur.id = 'ned-cursor';
-  const ring = document.createElement('div');
-  ring.id = 'ned-cursor-ring';
-  document.body.appendChild(cur);
-  document.body.appendChild(ring);
-
-  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
-  let rx = mx, ry = my;
-
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
-  (function animCursor() {
-    requestAnimationFrame(animCursor);
-    cur.style.left = mx + 'px';
-    cur.style.top  = my + 'px';
-    rx += (mx - rx) * 0.13;
-    ry += (my - ry) * 0.13;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-  })();
-
-  /* Efecto de escala en el cursor al hacer hover sobre links */
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      gsap.to(ring, { scale: 1.7, opacity: 0.5, duration: 0.3 });
-    });
-    el.addEventListener('mouseleave', () => {
-      gsap.to(ring, { scale: 1, opacity: 1, duration: 0.3 });
-    });
-  });
-
-  /* ─────────────────────────────────────────
-     2. SCROLL SUAVE Y PROGRESS BAR
-  ───────────────────────────────────────── */
-  // Barra de progreso de scroll
-  const bar = document.createElement('div');
-  bar.style.cssText = `
-    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
-    background: linear-gradient(90deg, #C0447A, #E8789F);
-    z-index: 99997; pointer-events: none;
-    transition: width 0.1s linear;
-  `;
-  document.body.appendChild(bar);
-
-  window.addEventListener('scroll', () => {
-    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-    bar.style.width = Math.min(pct, 100) + '%';
-  });
-
-  /* ─────────────────────────────────────────
-     3. PARALLAX EN IMÁGENES
-     Busca todas las <img> y las envuelve si
-     no están ya en un contenedor con overflow:hidden
-  ───────────────────────────────────────── */
-  function wrapImage(img) {
-    // No volver a envolver si ya tiene clase de parallax
-    if (img.closest('.ned-parallax-wrap')) return null;
-    // No aplicar a logos ni íconos pequeños
-    if (img.width < 100 || img.naturalWidth < 100) return null;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'ned-parallax-wrap';
-    wrapper.style.cssText = `
-      overflow: hidden;
-      display: block;
-      width: 100%;
-      height: ${img.height || 'auto'};
-      position: relative;
-    `;
-    img.parentNode.insertBefore(wrapper, img);
-    wrapper.appendChild(img);
-
-    // La imagen tiene un poco más de altura para el parallax
-    img.style.width  = '100%';
-    img.style.height = '115%';
-    img.style.objectFit = 'cover';
-    img.style.transform = 'translateY(-7%)';
-
-    return { wrapper, img };
-  }
-
-  // Aplica parallax a imágenes grandes del DOM
-  document.querySelectorAll('img').forEach(img => {
-    // Esperar a que cargue para conocer dimensiones
-    if (img.complete) {
-      applyParallax(img);
-    } else {
-      img.addEventListener('load', () => applyParallax(img));
+/* 1. HERO BACKGROUND — expansión principal */
+gsap.fromTo('.hero-bg',
+  { scale: 1 },
+  {
+    scale: 1.25,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1
     }
-  });
-
-  function applyParallax(img) {
-    if (img.offsetWidth < 100) return;
-    const result = wrapImage(img);
-    if (!result) return;
-
-    const { wrapper } = result;
-
-    // Entrada: expande suavemente desde escala pequeña
-    gsap.from(img, {
-      scale: 0.88,
-      opacity: 0,
-      duration: 1.2,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: wrapper,
-        start: 'top 88%',
-      }
-    });
-
-    // Parallax continuo mientras scrolleas
-    gsap.to(img, {
-      y: '-12%',
-      ease: 'none',
-      scrollTrigger: {
-        trigger: wrapper,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1.8,
-      }
-    });
   }
+);
 
-  /* ─────────────────────────────────────────
-     4. HERO SECTION — PARALLAX Y FADE
-  ───────────────────────────────────────── */
-  // Detecta la sección hero (primera section o div con "hero" en clase/id)
-  const heroEl =
-    document.querySelector('[id*="hero"], [class*="hero"], section:first-of-type, header') ||
-    document.querySelector('section');
-
-  if (heroEl) {
-    // El contenido del hero se mueve hacia arriba y se desvanece al scrollear
-    gsap.to(heroEl, {
-      y: '20%',
-      opacity: 0.4,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroEl,
-        start: 'top top',
-        end: '80% top',
-        scrub: 1.2,
-      }
-    });
+/* 2. HERO GRID — zoom más sutil para profundidad */
+gsap.fromTo('.hero-grid',
+  { scale: 1 },
+  {
+    scale: 1.15,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1
+    }
   }
+);
 
-  /* ─────────────────────────────────────────
-     5. ENTRADAS DE TEXTO Y SECCIONES
-     Detecta h1, h2, h3, p y les aplica
-     animación de entrada al hacer scroll
-  ───────────────────────────────────────── */
-  // Títulos
-  gsap.utils.toArray('h1, h2, h3').forEach(el => {
-    // Añade barra magenta decorativa
-    const accentBar = document.createElement('span');
-    accentBar.className = 'ned-accent-bar';
-    el.appendChild(accentBar);
+/* 3. ABOUT VISUAL — zoom en la imagen del about */
+gsap.fromTo('#aboutImg > div',
+  { scale: 1 },
+  {
+    scale: 1.2,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.about-section',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1
+    }
+  }
+);
 
-    gsap.from(el, {
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 82%',
-      }
-    });
-
-    // Barra magenta se extiende al aparecer
-    gsap.to(accentBar, {
-      width: '60px',
-      duration: 0.6,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 78%',
-      }
-    });
-  });
-
-  // Párrafos con entrada escalonada por sección
-  document.querySelectorAll('section, [id], article').forEach(section => {
-    const paras = section.querySelectorAll('p');
-    if (paras.length === 0) return;
-
-    gsap.from(paras, {
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.12,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 75%',
-      }
-    });
-  });
-
-  /* ─────────────────────────────────────────
-     6. TARJETAS / CARDS — HOVER ELEVACIÓN
-  ───────────────────────────────────────── */
-  // Detecta elementos que parecen cards (divs/articles con cierta altura)
-  document.querySelectorAll('article, .card, [class*="card"], [class*="item"], [class*="feature"], li').forEach(card => {
-    if (card.offsetHeight < 80) return; // ignorar elementos pequeños
-
-    card.classList.add('ned-card-hover');
-
-    // Entrada escalonada
-    gsap.from(card, {
-      y: 60,
-      opacity: 0,
-      duration: 0.9,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 85%',
-      }
-    });
-  });
-
-  /* ─────────────────────────────────────────
-     7. SECCIÓN #PROCESO — EFECTO ESPECIAL
-     (la sección que mencionaste en la URL)
-  ───────────────────────────────────────── */
-  const procesoEl = document.querySelector('#proceso, [id="proceso"], [class*="proceso"]');
-
-  if (procesoEl) {
-    // Título con efecto de clip reveal
-    const procesoTitles = procesoEl.querySelectorAll('h1, h2, h3, h4');
-    procesoTitles.forEach(t => {
-      gsap.from(t, {
-        x: -80,
-        opacity: 0,
-        duration: 1,
-        ease: 'power4.out',
+/* 4. GALLERY ITEMS — zoom escalonado por item */
+(function(){
+  const galleryItems = [
+    { sel: '#gi1 .gallery-img-inner > div', scale: 1.2 },
+    { sel: '#gi2 .gallery-img-inner > div', scale: 1.25 },
+    { sel: '#gi3 .gallery-img-inner > div', scale: 1.2  },
+    { sel: '#gi4 .gallery-img-inner > div', scale: 1.22 },
+    { sel: '#gi5 .gallery-img-inner > div', scale: 1.2  },
+    { sel: '#gi6 .gallery-img-inner > div', scale: 1.18 },
+  ];
+  galleryItems.forEach(({ sel, scale }) => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    gsap.fromTo(el,
+      { scale: 1 },
+      {
+        scale: scale,
+        ease: 'none',
         scrollTrigger: {
-          trigger: t,
-          start: 'top 80%',
+          trigger: el.closest('.gallery-item'),
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
         }
-      });
-    });
-
-    // Items del proceso: entrada en cascada con línea conectora
-    const procesoItems = procesoEl.querySelectorAll('li, [class*="step"], [class*="etapa"], [class*="fase"], div > div');
-    procesoItems.forEach((item, i) => {
-      if (item.offsetHeight < 50) return;
-
-      gsap.from(item, {
-        x: i % 2 === 0 ? -50 : 50,
-        opacity: 0,
-        duration: 0.9,
-        ease: 'power3.out',
-        delay: i * 0.08,
-        scrollTrigger: {
-          trigger: item,
-          start: 'top 82%',
-        }
-      });
-
-      // Scale expand al entrar en viewport
-      gsap.fromTo(item,
-        { scale: 0.93 },
-        {
-          scale: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: item,
-            start: 'top 90%',
-            end: 'top 50%',
-            scrub: 1,
-          }
-        }
-      );
-    });
-  }
-
-  /* ─────────────────────────────────────────
-     8. CONTADOR ANIMADO
-     Detecta números grandes en el DOM
-     y los anima al entrar en viewport
-  ───────────────────────────────────────── */
-  document.querySelectorAll('strong, b, [class*="number"], [class*="stat"], [class*="counter"]').forEach(el => {
-    const txt = el.innerText || '';
-    const match = txt.match(/^(\d+)([\+\%\s\w]*)$/);
-    if (!match) return;
-
-    const endVal = parseInt(match[1], 10);
-    const suffix = match[2] || '';
-    const obj = { val: 0 };
-
-    gsap.to(obj, {
-      val: endVal,
-      duration: 2,
-      ease: 'power2.out',
-      onUpdate: () => { el.textContent = Math.round(obj.val) + suffix; },
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 80%',
-        once: true,
       }
-    });
+    );
   });
-
-  /* ─────────────────────────────────────────
-     9. SECCIONES — FONDO CON PARALLAX SUTIL
-  ───────────────────────────────────────── */
-  document.querySelectorAll('section').forEach((sec, i) => {
-    // Alterna dirección del parallax por sección
-    const dir = i % 2 === 0 ? '4%' : '-4%';
-    gsap.to(sec, {
-      backgroundPositionY: dir,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: sec,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 2,
-      }
-    });
-  });
-
-  /* ─────────────────────────────────────────
-     10. LOGO — ANIMACIÓN DE ENTRADA
-  ───────────────────────────────────────── */
-  const logo = document.querySelector('header img, nav img, .logo img, img[alt*="logo"], img[alt*="NED"]');
-  if (logo) {
-    gsap.from(logo, {
-      scale: 0,
-      rotation: -10,
-      opacity: 0,
-      duration: 1,
-      ease: 'back.out(1.8)',
-      delay: 0.3,
-    });
-  }
-
-  /* ─────────────────────────────────────────
-     11. REFRESH DE SCROLL TRIGGER
-     (por si hay imágenes lazy load)
-  ───────────────────────────────────────── */
-  window.addEventListener('load', () => {
-    ScrollTrigger.refresh();
-  });
-
-  setTimeout(() => ScrollTrigger.refresh(), 800);
-
 })();
+
+/* 5. SERVICE CARDS — zoom en fondos de tarjetas */
+document.querySelectorAll('.service-card-img').forEach(img => {
+  gsap.fromTo(img,
+    { scale: 1 },
+    {
+      scale: 1.2,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: img.closest('.service-card'),
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1
+      }
+    }
+  );
+});
+
+/* 6. EXPAND ITEM IMAGES — zoom al abrir acordeón + scroll */
+document.querySelectorAll('.expand-item-img > div').forEach(div => {
+  gsap.fromTo(div,
+    { scale: 1 },
+    {
+      scale: 1.2,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: div.closest('.expand-item'),
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1
+      }
+    }
+  );
+});
+
+/* 7. CTA — zoom radial en los círculos de fondo */
+gsap.fromTo('.cta-bg-circle:nth-child(1)',
+  { scale: 0.8 },
+  {
+    scale: 1.3,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.cta-section',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 1
+    }
+  }
+);
+
+/* Refresh final para garantizar posiciones correctas */
+ScrollTrigger.refresh();
 </script>
 
-<!-- ============================================================
-  FIN DEL BLOQUE — Pégalo justo antes de </body>
-  ============================================================ -->
+</body>
 </html>
