@@ -738,13 +738,14 @@ footer {
 }
 .browser-screen {
   overflow: hidden;
-  background: #1a1a1a;
+  background: #111113;
   position: relative;
-  height: 360px;
+  /* Sin altura fija: la imagen define su propia altura naturalmente */
 }
 .browser-screen img {
   width: 100%;
-  height: 100%;
+  height: auto;          /* respeta las proporciones reales de la imagen */
+  max-height: 480px;     /* tope para imágenes muy largas */
   object-fit: cover;
   object-position: top center;
   display: block;
